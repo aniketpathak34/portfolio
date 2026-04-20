@@ -38,7 +38,7 @@
             <h2>About</h2>
             <div class="about-grid">
                 <div>
-                    <p>I'm <strong>Aniket Pathak</strong>, a Backend Engineer at <strong>Thinkitive Technologies</strong> (Nov 2023 – present) working with US healthcare clients out of Pune, India. I own production microservices end-to-end — Django, FastAPI, Celery, AWS — and spend most of my time making 20+ EHR integrations look like one clean API.</p>
+                    <p>I'm <strong>Aniket Pathak</strong>, a Backend Engineer based in Pune, India, working with US healthcare teams on an <strong>independent / freelance</strong> basis. I own production microservices end-to-end — Django, FastAPI, Celery, AWS — and spend most of my time making 20+ EHR integrations look like one clean API.</p>
                     <p>Lately I've been building HIPAA-compliant AI microservices on top of <strong>LangGraph</strong> and <strong>LangChain</strong>: stateful multi-turn clinical conversations that stay grounded in a patient's real history. I care about clean contracts, boring reliability, and shipping.</p>
                 </div>
                 <ul class="skills">
@@ -59,7 +59,7 @@
             <div class="projects">
                 <article class="project-card">
                     <h3>Ziva Health — EHR Integration Bridge</h3>
-                    <p class="project-role">Thinkitive Technologies · Backend owner</p>
+                    <p class="project-role">Freelance · Backend owner</p>
                     <p>Multi-tenant Django microservice that bridges Ziva Health with 20+ EHRs (Healthie, Elation, and others). Syncs patient records, SOAP notes, clinical documents, and appointments over REST &amp; GraphQL, with webhook-driven real-time exchange. Configurable per-clinic templates let new EHRs onboard via config rather than code — and a single request/response contract across all adapters keeps integration bugs rare.</p>
                     <ul class="tags">
                         <li>Django</li><li>REST</li><li>GraphQL</li><li>Webhooks</li><li>Multi-tenant</li>
@@ -68,7 +68,7 @@
 
                 <article class="project-card">
                     <h3>Isabella AI — HIPAA-Compliant Healthcare AI</h3>
-                    <p class="project-role">Thinkitive Technologies · Backend engineer</p>
+                    <p class="project-role">Freelance · Backend engineer</p>
                     <p>FastAPI microservice powering natural-language conversations between patients and providers, built on <strong>LangGraph + LangChain</strong>. Stateful conversation graphs keep clinical context across sessions; structured patient history (past notes, appointments, records) grounds every LLM response. HIPAA-compliant by design — PHI isolation, audit logging, and secure handling baked in.</p>
                     <ul class="tags">
                         <li>FastAPI</li><li>LangGraph</li><li>LangChain</li><li>LLM APIs</li><li>HIPAA</li>
@@ -77,7 +77,7 @@
 
                 <article class="project-card">
                     <h3>Samacare — Prior-Auth EHR Bridge</h3>
-                    <p class="project-role">Thinkitive Technologies · Backend engineer</p>
+                    <p class="project-role">Freelance · Backend engineer</p>
                     <p>Django + Celery EHR integration bridge for <strong>Samacare's</strong> prior-authorization platform. Standardized patient, document, and clinical-summary contracts across multiple EHR vendors so the prior-auth workflows could operate on a consistent schema, regardless of the source system.</p>
                     <ul class="tags">
                         <li>Django</li><li>Celery</li><li>Docker</li><li>EHR Integration</li>
@@ -86,7 +86,7 @@
 
                 <article class="project-card">
                     <h3>ChronicCareIQ — EHR Integration</h3>
-                    <p class="project-role">Thinkitive Technologies · Backend engineer</p>
+                    <p class="project-role">Freelance · Backend engineer</p>
                     <p>Backend integration module for <strong>ChronicCareIQ (CCIQ)</strong>, a chronic-care-management platform. Connected CCIQ's care workflows to vendor EHRs for patient demographics, clinical summaries, and document sync, reusing the standardized adapter contract.</p>
                     <ul class="tags">
                         <li>Django</li><li>REST</li><li>Multi-tenant</li><li>Chronic Care</li>
@@ -95,7 +95,7 @@
 
                 <article class="project-card">
                     <h3>Sully AI — Healthcare AI Integration</h3>
-                    <p class="project-role">Thinkitive Technologies · Backend engineer</p>
+                    <p class="project-role">Freelance · Backend engineer</p>
                     <p>Contributed backend and EHR-integration work for <strong>Sully AI</strong>, a clinical AI product. Focused on reliable data flow between the AI layer and upstream EHR systems so generated clinical content stayed grounded in real patient context.</p>
                     <ul class="tags">
                         <li>Python</li><li>AI Integration</li><li>REST</li><li>Healthcare</li>
@@ -104,7 +104,7 @@
 
                 <article class="project-card">
                     <h3>CCFood — WhatsApp Ordering Backend</h3>
-                    <p class="project-role">Thinkitive Project · Backend engineer</p>
+                    <p class="project-role">Freelance · Backend engineer</p>
                     <p>Django backend powering a WhatsApp + SMS food-ordering flow over Twilio, with real-time order processing and 2FA restaurant onboarding APIs.</p>
                     <ul class="tags">
                         <li>Django</li><li>Twilio</li><li>WhatsApp</li><li>2FA</li>
@@ -116,22 +116,24 @@
         <section id="tryout" class="section tryout-wrap">
             <div class="container">
                 <h2>Try it out</h2>
-                <p class="section-lede">Pick an EHR, hit <em>Fetch patient</em>, and watch the same endpoint return a normalized response — even though the raw vendor payloads look completely different underneath.</p>
+                <p class="section-lede">Pick an EHR and a patient, hit <em>Fetch patient</em>, and watch the same endpoint return a normalized response — even though the raw vendor payloads look completely different underneath. The <strong>Epic / FHIR R4</strong> side makes a real, live call to the public <a href="https://r4.smarthealthit.org/" target="_blank" rel="noopener">SMART Health IT</a> sandbox (Synthea-generated test patients). ECW has no public sandbox, so its envelope is simulated from the same real patient.</p>
 
                 <div class="demo">
                     <div class="demo-controls">
                         <label>
                             <span>EHR system</span>
                             <select id="ehr-select">
-                                <option value="ecw">eClinicalWorks (ECW)</option>
-                                <option value="epic">Epic / OpenEpic</option>
+                                <option value="epic">Epic / FHIR R4 · live</option>
+                                <option value="ecw">eClinicalWorks · simulated</option>
                             </select>
                         </label>
                         <label>
-                            <span>Patient ID</span>
-                            <input id="patient-id" type="text" value="P-10042" />
+                            <span>Patient</span>
+                            <select id="patient-id">
+                                <option value="">Loading patients…</option>
+                            </select>
                         </label>
-                        <button id="fetch-btn" class="btn btn-primary">Fetch patient</button>
+                        <button id="fetch-btn" class="btn btn-primary" disabled>Fetch patient</button>
                     </div>
 
                     <div class="demo-request">

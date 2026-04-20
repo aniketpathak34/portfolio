@@ -1,72 +1,92 @@
 // Year in footer
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// --- Mock EHR data --------------------------------------------------
-// The point of this demo: two wildly different raw payloads from two
-// different EHRs collapse into ONE normalized shape the client can rely on.
+// -------------------------------------------------------------------
+// Live FHIR R4 sandbox (SMART Health IT — public, CORS-enabled, Synthea data)
+// -------------------------------------------------------------------
+const FHIR_BASE = "https://r4.smarthealthit.org";
+const SAMPLE_COUNT = 6;
 
-const RAW_RESPONSES = {
-    ecw: {
-        // ECW returns a SOAP-ish JSON-wrapped envelope
+// -------------------------------------------------------------------
+// Data helpers
+// -------------------------------------------------------------------
+
+async function fetchPatientList() {
+    const resp = await fetch(`${FHIR_BASE}/Patient?_count=${SAMPLE_COUNT}&_sort=-_lastUpdated`);
+    if (!resp.ok) throw new Error(`Patient list fetch failed: HTTP ${resp.status}`);
+    const bundle = await resp.json();
+    return (bundle.entry || []).map((e) => e.resource).filter(Boolean);
+}
+
+async function fetchFhirPatient(id) {
+    const resp = await fetch(`${FHIR_BASE}/Patient/${encodeURIComponent(id)}`);
+    if (!resp.ok) throw new Error(`Patient fetch failed: HTTP ${resp.status}`);
+    return resp.json();
+}
+
+function patientDisplayName(patient) {
+    const nm = patient.name?.[0];
+    if (!nm) return patient.id;
+    const given = (nm.given || []).join(" ");
+    return `${given} ${nm.family || ""}`.trim() || patient.id;
+}
+
+// Build an ECW-flavored envelope from a real FHIR patient so the demo
+// shows how the "same" patient would look coming out of ECW.
+function synthesizeEcwEnvelope(fhir) {
+    const nm = fhir.name?.[0] || {};
+    const phone = (fhir.telecom || []).find((t) => t.system === "phone");
+    const email = (fhir.telecom || []).find((t) => t.system === "email");
+    const addr = fhir.address?.[0] || {};
+    const genderMap = { female: "F", male: "M", other: "O", unknown: "U" };
+    return {
         ResponseHeader: {
             Status: "OK",
-            ServerDateTime: "2026-04-21T09:14:02-05:00",
+            ServerDateTime: new Date().toISOString(),
+            Source: "eCW Web EMR (simulated)",
         },
         PatientInformation: {
-            PatientID: "P-10042",
+            PatientID: fhir.id,
             PatientName: {
-                FirstName: "Priya",
-                LastName: "Shah",
-                MiddleInitial: "R",
+                FirstName: nm.given?.[0] || "",
+                MiddleInitial: nm.given?.[1] || null,
+                LastName: nm.family || "",
             },
-            DOB: "04/12/1987",
-            Gender: "F",
+            DOB: fhir.birthDate ? isoToMDY(fhir.birthDate) : null,
+            Gender: genderMap[fhir.gender] || "U",
             ContactInfo: {
-                HomePhone: "+1-415-555-0142",
-                EmailAddress: "priya.shah@example.com",
+                HomePhone: phone?.value || null,
+                EmailAddress: email?.value || null,
             },
             Address: {
-                AddressLine1: "221B Market Street",
-                City: "San Francisco",
-                State: "CA",
-                ZipCode: "94103",
+                AddressLine1: addr.line?.[0] || null,
+                City: addr.city || null,
+                State: addr.state || null,
+                ZipCode: addr.postalCode || null,
             },
-            PrimaryProvider: "Dr. Alan Webb",
-            LastEncounter: "03/29/2026",
+            PrimaryProvider: fhir.generalPractitioner?.[0]?.display || null,
+            LastEncounter: null,
         },
-    },
-    epic: {
-        // Epic / OpenEpic returns FHIR R4
-        resourceType: "Patient",
-        id: "P-10042",
-        name: [{ given: ["Priya", "R"], family: "Shah", use: "official" }],
-        birthDate: "1987-04-12",
-        gender: "female",
-        telecom: [
-            { system: "phone", value: "+1-415-555-0142", use: "home" },
-            { system: "email", value: "priya.shah@example.com" },
-        ],
-        address: [
-            {
-                line: ["221B Market Street"],
-                city: "San Francisco",
-                state: "CA",
-                postalCode: "94103",
-                country: "US",
-            },
-        ],
-        generalPractitioner: [{ display: "Dr. Alan Webb" }],
-        extension: [
-            {
-                url: "https://fhir.openepic.com/StructureDefinition/last-encounter",
-                valueDate: "2026-03-29",
-            },
-        ],
-    },
-};
+    };
+}
 
-// Transformers — mirror the pattern in the real bridge (one per EHR,
-// both return the same normalized shape).
+function isoToMDY(iso) {
+    const parts = iso.split("-");
+    if (parts.length !== 3) return iso;
+    return `${parts[1]}/${parts[2]}/${parts[0]}`;
+}
+
+function mdyToIso(mdy) {
+    if (!mdy) return null;
+    const parts = mdy.split("/");
+    if (parts.length !== 3) return mdy;
+    const [m, d, y] = parts;
+    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+}
+
+// -------------------------------------------------------------------
+// Transformers — one per EHR, both return the same normalized shape.
+// -------------------------------------------------------------------
 const TRANSFORMERS = {
     ecw(raw) {
         const p = raw.PatientInformation;
@@ -74,25 +94,25 @@ const TRANSFORMERS = {
         return {
             patient_id: p.PatientID,
             name: {
-                first: name.FirstName,
+                first: name.FirstName || null,
                 middle: name.MiddleInitial || null,
-                last: name.LastName,
+                last: name.LastName || null,
             },
-            date_of_birth: toIsoDate(p.DOB),
+            date_of_birth: mdyToIso(p.DOB),
             gender: p.Gender === "F" ? "female" : p.Gender === "M" ? "male" : "unknown",
             contact: {
-                phone: p.ContactInfo.HomePhone,
-                email: p.ContactInfo.EmailAddress,
+                phone: p.ContactInfo?.HomePhone || null,
+                email: p.ContactInfo?.EmailAddress || null,
             },
             address: {
-                line1: p.Address.AddressLine1,
-                city: p.Address.City,
-                state: p.Address.State,
-                postal_code: p.Address.ZipCode,
+                line1: p.Address?.AddressLine1 || null,
+                city: p.Address?.City || null,
+                state: p.Address?.State || null,
+                postal_code: p.Address?.ZipCode || null,
                 country: "US",
             },
-            primary_provider: p.PrimaryProvider,
-            last_encounter_date: toIsoDate(p.LastEncounter),
+            primary_provider: p.PrimaryProvider || null,
+            last_encounter_date: mdyToIso(p.LastEncounter),
             source_ehr: "eclinicalworks",
         };
     },
@@ -101,7 +121,6 @@ const TRANSFORMERS = {
         const phone = (raw.telecom || []).find((t) => t.system === "phone");
         const email = (raw.telecom || []).find((t) => t.system === "email");
         const addr = raw.address?.[0] || {};
-        const lastEnc = (raw.extension || []).find((e) => e.url?.endsWith("last-encounter"));
         return {
             patient_id: raw.id,
             name: {
@@ -109,7 +128,7 @@ const TRANSFORMERS = {
                 middle: nm.given?.[1] || null,
                 last: nm.family || null,
             },
-            date_of_birth: raw.birthDate,
+            date_of_birth: raw.birthDate || null,
             gender: raw.gender || "unknown",
             contact: {
                 phone: phone?.value || null,
@@ -123,22 +142,15 @@ const TRANSFORMERS = {
                 country: addr.country || "US",
             },
             primary_provider: raw.generalPractitioner?.[0]?.display || null,
-            last_encounter_date: lastEnc?.valueDate || null,
+            last_encounter_date: null,
             source_ehr: "epic",
         };
     },
 };
 
-function toIsoDate(mdY) {
-    // "04/12/1987" -> "1987-04-12"
-    if (!mdY) return null;
-    const parts = mdY.split("/");
-    if (parts.length !== 3) return mdY;
-    const [m, d, y] = parts;
-    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
-}
-
-// --- Rendering ------------------------------------------------------
+// -------------------------------------------------------------------
+// Rendering
+// -------------------------------------------------------------------
 
 function escapeHtml(s) {
     return s
@@ -147,7 +159,6 @@ function escapeHtml(s) {
         .replace(/>/g, "&gt;");
 }
 
-// Tiny JSON pretty-printer with syntax highlighting via CSS classes.
 function highlightJson(obj) {
     const raw = escapeHtml(JSON.stringify(obj, null, 2));
     return raw.replace(
@@ -166,8 +177,9 @@ function highlightJson(obj) {
     );
 }
 
-// --- Wire it up -----------------------------------------------------
-
+// -------------------------------------------------------------------
+// Wire-up
+// -------------------------------------------------------------------
 const $ehr = document.getElementById("ehr-select");
 const $pid = document.getElementById("patient-id");
 const $btn = document.getElementById("fetch-btn");
@@ -177,11 +189,20 @@ const $norm = document.getElementById("normalized-response");
 const $rawHint = document.getElementById("raw-hint");
 const $status = document.getElementById("status");
 
+// Cache the real FHIR patient we've loaded, so ECW can synthesize from it
+// without hitting the network again.
+let currentPatient = null;
+
 function updateRequestPreview() {
     const ehr = $ehr.value;
-    const pid = encodeURIComponent($pid.value.trim() || "P-10042");
-    $req.textContent = `GET /api/v1/clinical-summary/patient?ehr=${ehr}&patient_id=${pid}`;
-    $rawHint.textContent = ehr === "ecw" ? "ECW shape (JSON envelope)" : "Epic shape (FHIR R4)";
+    const pid = $pid.value || "—";
+    if (ehr === "epic") {
+        $req.textContent = `GET ${FHIR_BASE}/Patient/${pid}`;
+        $rawHint.textContent = "Live · FHIR R4";
+    } else {
+        $req.textContent = `GET /api/v1/clinical-summary/patient?ehr=ecw&patient_id=${pid}`;
+        $rawHint.textContent = "Simulated · ECW envelope";
+    }
 }
 
 function setStatus(msg, kind = "") {
@@ -189,43 +210,81 @@ function setStatus(msg, kind = "") {
     $status.className = "demo-status" + (kind ? " " + kind : "");
 }
 
+async function populatePatientDropdown() {
+    setStatus("Loading sample patients from SMART Health IT sandbox…");
+    try {
+        const patients = await fetchPatientList();
+        if (!patients.length) throw new Error("no patients returned");
+        $pid.innerHTML = "";
+        for (const p of patients) {
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            opt.textContent = `${patientDisplayName(p)}  ·  ${p.id.slice(0, 8)}…`;
+            $pid.appendChild(opt);
+        }
+        $btn.disabled = false;
+        setStatus("Ready. Pick an EHR and hit Fetch patient.", "ok");
+        updateRequestPreview();
+        // Kick off an initial fetch so the demo isn't empty.
+        fetchPatient();
+    } catch (err) {
+        setStatus(`Couldn't load patient list: ${err.message}`, "err");
+    }
+}
+
 async function fetchPatient() {
     const ehr = $ehr.value;
-    const pid = $pid.value.trim();
+    const pid = $pid.value;
     if (!pid) {
-        setStatus("Please enter a patient ID.", "err");
+        setStatus("Pick a patient first.", "err");
         return;
     }
     $btn.disabled = true;
-    setStatus("Fetching…");
+    setStatus(ehr === "epic" ? "Calling SMART Health IT FHIR sandbox…" : "Synthesizing ECW envelope…");
 
-    // Simulate network
-    await new Promise((r) => setTimeout(r, 450));
+    try {
+        // Always fetch the real FHIR patient (live).  For ECW we then
+        // reshape the same patient into an ECW envelope.
+        if (!currentPatient || currentPatient.id !== pid) {
+            currentPatient = await fetchFhirPatient(pid);
+        }
 
-    const raw = RAW_RESPONSES[ehr];
-    if (!raw) {
-        setStatus("Unsupported EHR.", "err");
+        let rawResponse, transformerKey;
+        if (ehr === "epic") {
+            rawResponse = currentPatient;
+            transformerKey = "epic";
+        } else {
+            rawResponse = synthesizeEcwEnvelope(currentPatient);
+            transformerKey = "ecw";
+        }
+
+        const normalized = TRANSFORMERS[transformerKey](rawResponse);
+
+        $raw.innerHTML = highlightJson(rawResponse);
+        $norm.innerHTML = highlightJson(normalized);
+
+        const tag = ehr === "epic" ? "live FHIR R4" : "simulated ECW";
+        setStatus(`200 OK · ${tag} · normalized via ${transformerKey.toUpperCase()} transformer`, "ok");
+    } catch (err) {
+        setStatus(`Error: ${err.message}`, "err");
+        $raw.textContent = "—";
+        $norm.textContent = "—";
+    } finally {
         $btn.disabled = false;
-        return;
     }
-
-    // Clone + inject the requested patient_id so the demo honors the input.
-    const rawClone = JSON.parse(JSON.stringify(raw));
-    if (ehr === "ecw") rawClone.PatientInformation.PatientID = pid;
-    else rawClone.id = pid;
-
-    const normalized = TRANSFORMERS[ehr](rawClone);
-
-    $raw.innerHTML = highlightJson(rawClone);
-    $norm.innerHTML = highlightJson(normalized);
-    setStatus(`200 OK · normalized via ${ehr.toUpperCase()} transformer`, "ok");
-    $btn.disabled = false;
 }
 
-$ehr.addEventListener("change", updateRequestPreview);
-$pid.addEventListener("input", updateRequestPreview);
+$ehr.addEventListener("change", () => {
+    updateRequestPreview();
+    fetchPatient();
+});
+$pid.addEventListener("change", () => {
+    currentPatient = null;
+    updateRequestPreview();
+    fetchPatient();
+});
 $btn.addEventListener("click", fetchPatient);
 
-// Initial state
+// Initial load
 updateRequestPreview();
-fetchPatient();
+populatePatientDropdown();
