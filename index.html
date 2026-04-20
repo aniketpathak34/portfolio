@@ -3,51 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>Aniket Pathak — Software Engineer</title>
+    <meta name="description" content="Portfolio of Aniket Pathak — software engineer building EHR integrations and healthcare APIs.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>My Portfolio</h1>
-        <nav>
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#tryout">Try Out</a>
-            <a href="#contact">Contact</a>
-        </nav>
+    <header class="site-header">
+        <div class="container nav-wrap">
+            <a class="brand" href="#top">AP<span class="brand-dot">.</span></a>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#tryout">Try&nbsp;Out</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
     </header>
 
-    <section id="about">
-        <h2>About Me</h2>
-        <p>Hi, I'm [Your Name]. I have worked on various projects in software development, including EHR integrations, web applications, and more. Here's a brief overview of my work.</p>
-        <!-- Add more personal info -->
-    </section>
+    <main id="top">
+        <section class="hero container">
+            <p class="eyebrow">Software Engineer</p>
+            <h1>Building reliable bridges between <span class="accent">healthcare systems</span>.</h1>
+            <p class="lede">I design and ship backend systems that unify messy EHR APIs behind clean, predictable interfaces — so product teams can focus on care, not on vendor quirks.</p>
+            <div class="cta-row">
+                <a class="btn btn-primary" href="#tryout">See a live demo</a>
+                <a class="btn btn-ghost" href="#projects">View work</a>
+            </div>
+        </section>
 
-    <section id="projects">
-        <h2>My Projects</h2>
-        <div class="project">
-            <h3>Project 1: EHR Integration</h3>
-            <p>Description of the project...</p>
+        <section id="about" class="container section">
+            <h2>About</h2>
+            <div class="about-grid">
+                <div>
+                    <p>I'm <strong>Aniket Pathak</strong>, a software engineer focused on healthcare integrations. Most of my work lives in the space between vendor EHRs — eClinicalWorks, Epic, Athena, NextGen — and the product teams trying to build on top of them.</p>
+                    <p>My day-to-day: FHIR transforms, REST APIs, token dances, edge cases nobody documented, and the kind of quiet plumbing that either works every time or gets paged about at 2 a.m.</p>
+                </div>
+                <ul class="skills">
+                    <li>Python · Django · DRF</li>
+                    <li>FHIR (DSTU2, R4)</li>
+                    <li>REST &amp; OAuth2</li>
+                    <li>PostgreSQL</li>
+                    <li>Celery · Redis</li>
+                    <li>Docker</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="projects" class="container section">
+            <h2>Selected work</h2>
+            <div class="projects">
+                <article class="project-card">
+                    <h3>EHR Bridge</h3>
+                    <p class="project-role">Backend engineer · healthcare integrations</p>
+                    <p>A unified API layer that translates between multiple EHR vendors (eClinicalWorks, Epic/OpenEpic, Athena, NextGen, Nextech, OncoEMR) and a normalized internal schema. Product teams hit one endpoint; the bridge handles vendor-specific auth, request shapes, and response transforms.</p>
+                    <ul class="tags">
+                        <li>Python</li><li>Django</li><li>FHIR</li><li>OAuth2</li>
+                    </ul>
+                </article>
+
+                <article class="project-card">
+                    <h3>Clinical Summary Workflows</h3>
+                    <p class="project-role">Workflow design</p>
+                    <p>Per-EHR transformers for patient, document, and visit queries — each vendor has its own quirks, but the caller sees one consistent contract. The <em>Try Out</em> section below demos this pattern end-to-end.</p>
+                    <ul class="tags">
+                        <li>Transformers</li><li>REST</li><li>Normalized schema</li>
+                    </ul>
+                </article>
+
+                <article class="project-card">
+                    <h3>Bulk Data &amp; Scheduling</h3>
+                    <p class="project-role">Backend engineer</p>
+                    <p>Async bulk data pulls, scheduling endpoints, and provider/department sync across EHRs — with retries, backoff, and idempotent writes so replays are safe.</p>
+                    <ul class="tags">
+                        <li>Celery</li><li>Async</li><li>Idempotency</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="tryout" class="section tryout-wrap">
+            <div class="container">
+                <h2>Try it out</h2>
+                <p class="section-lede">Pick an EHR, hit <em>Fetch patient</em>, and watch the same endpoint return a normalized response — even though the raw vendor payloads look completely different underneath.</p>
+
+                <div class="demo">
+                    <div class="demo-controls">
+                        <label>
+                            <span>EHR system</span>
+                            <select id="ehr-select">
+                                <option value="ecw">eClinicalWorks (ECW)</option>
+                                <option value="epic">Epic / OpenEpic</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>Patient ID</span>
+                            <input id="patient-id" type="text" value="P-10042" />
+                        </label>
+                        <button id="fetch-btn" class="btn btn-primary">Fetch patient</button>
+                    </div>
+
+                    <div class="demo-request">
+                        <span class="demo-label">Request</span>
+                        <pre><code id="request-preview">GET /api/v1/clinical-summary/patient?ehr=ecw&amp;patient_id=P-10042</code></pre>
+                    </div>
+
+                    <div class="demo-panels">
+                        <div class="demo-panel">
+                            <div class="demo-panel-head">
+                                <span class="demo-label">Raw vendor response</span>
+                                <span class="demo-hint" id="raw-hint">ECW shape</span>
+                            </div>
+                            <pre><code id="raw-response">—</code></pre>
+                        </div>
+                        <div class="demo-panel demo-panel-accent">
+                            <div class="demo-panel-head">
+                                <span class="demo-label">Normalized response</span>
+                                <span class="demo-hint">Same shape, every EHR</span>
+                            </div>
+                            <pre><code id="normalized-response">—</code></pre>
+                        </div>
+                    </div>
+
+                    <div id="status" class="demo-status" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="container section">
+            <h2>Get in touch</h2>
+            <p>Have an integration problem, a healthcare data mess, or just want to say hi? I'd love to hear from you.</p>
+            <ul class="contact-list">
+                <li><a href="mailto:aniket.pathak@thinkitive.com">aniket.pathak@thinkitive.com</a></li>
+                <li><a href="https://github.com/aniketpathak34" target="_blank" rel="noopener">github.com/aniketpathak34</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <span>© <span id="year"></span> Aniket Pathak</span>
+            <span class="footer-note">Built with plain HTML, CSS, JS · Deployed on GitHub Pages</span>
         </div>
-        <!-- Add more projects -->
-    </section>
-
-    <section id="tryout">
-        <h2>Try Out Section</h2>
-        <p>Select an EHR system to see sample patient data from the API:</p>
-        <select id="ehr-select">
-            <option value="">Choose EHR</option>
-            <option value="ecw">ECW</option>
-            <option value="epic">Epic</option>
-        </select>
-        <div id="patient-info"></div>
-    </section>
-
-    <section id="contact">
-        <h2>Contact</h2>
-        <p>Email: your.email@example.com</p>
-        <!-- Add more contact info -->
-    </section>
+    </footer>
 
     <script src="script.js"></script>
 </body>
