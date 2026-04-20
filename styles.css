@@ -220,10 +220,10 @@ nav a:hover { color: var(--text); text-decoration: none; }
 }
 
 .demo-controls {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
-    align-items: end;
+    align-items: flex-end;
     margin-bottom: 1.5rem;
 }
 .demo-controls label {
@@ -235,6 +235,14 @@ nav a:hover { color: var(--text); text-decoration: none; }
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
+    flex: 1 1 220px;
+    min-width: 0;
+}
+.demo-controls #fetch-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 0.75rem 1.4rem;
+    height: fit-content;
 }
 .demo-controls select,
 .demo-controls input {
@@ -372,7 +380,7 @@ nav a:hover { color: var(--text); text-decoration: none; }
 }
 @media (max-width: 760px) {
     .about-grid { grid-template-columns: 1fr; }
-    .demo-controls { grid-template-columns: 1fr; }
+    .demo-controls #fetch-btn { width: 100%; }
     nav a { margin-left: 1rem; font-size: 0.9rem; }
     .hero { padding: 3rem 1.25rem 2.5rem; }
     .section { padding: 2.5rem 1.25rem; }
