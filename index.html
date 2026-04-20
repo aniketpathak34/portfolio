@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aniket Pathak — Software Engineer</title>
-    <meta name="description" content="Portfolio of Aniket Pathak — software engineer building EHR integrations and healthcare APIs.">
+    <title>Aniket Pathak — Backend Engineer</title>
+    <meta name="description" content="Backend engineer in Pune — Django, FastAPI, LangGraph/LangChain, and 20+ EHR integrations for US healthcare clients.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -25,9 +25,9 @@
 
     <main id="top">
         <section class="hero container">
-            <p class="eyebrow">Software Engineer</p>
-            <h1>Building reliable bridges between <span class="accent">healthcare systems</span>.</h1>
-            <p class="lede">I design and ship backend systems that unify messy EHR APIs behind clean, predictable interfaces — so product teams can focus on care, not on vendor quirks.</p>
+            <p class="eyebrow">Backend Engineer · Pune, India</p>
+            <h1>Production backends for <span class="accent">healthcare</span>, at scale.</h1>
+            <p class="lede">I build multi-tenant microservices that talk to 20+ EHRs, ship HIPAA-compliant AI workflows with LangGraph + LangChain, and keep clean REST contracts between very messy systems.</p>
             <div class="cta-row">
                 <a class="btn btn-primary" href="#tryout">See a live demo</a>
                 <a class="btn btn-ghost" href="#projects">View work</a>
@@ -38,16 +38,18 @@
             <h2>About</h2>
             <div class="about-grid">
                 <div>
-                    <p>I'm <strong>Aniket Pathak</strong>, a software engineer focused on healthcare integrations. Most of my work lives in the space between vendor EHRs — eClinicalWorks, Epic, Athena, NextGen — and the product teams trying to build on top of them.</p>
-                    <p>My day-to-day: FHIR transforms, REST APIs, token dances, edge cases nobody documented, and the kind of quiet plumbing that either works every time or gets paged about at 2 a.m.</p>
+                    <p>I'm <strong>Aniket Pathak</strong>, a Backend Engineer at <strong>Thinkitive Technologies</strong> (Nov 2023 – present) working with US healthcare clients out of Pune, India. I own production microservices end-to-end — Django, FastAPI, Celery, AWS — and spend most of my time making 20+ EHR integrations look like one clean API.</p>
+                    <p>Lately I've been building HIPAA-compliant AI microservices on top of <strong>LangGraph</strong> and <strong>LangChain</strong>: stateful multi-turn clinical conversations that stay grounded in a patient's real history. I care about clean contracts, boring reliability, and shipping.</p>
                 </div>
                 <ul class="skills">
-                    <li>Python · Django · DRF</li>
-                    <li>FHIR (DSTU2, R4)</li>
-                    <li>REST &amp; OAuth2</li>
-                    <li>PostgreSQL</li>
-                    <li>Celery · Redis</li>
-                    <li>Docker</li>
+                    <li>Python · Django · FastAPI</li>
+                    <li>REST · GraphQL</li>
+                    <li>LangGraph · LangChain</li>
+                    <li>LLM APIs · Agentic AI</li>
+                    <li>Celery · Redis · PostgreSQL</li>
+                    <li>Docker · GitHub Actions · AWS</li>
+                    <li>EHR Integration · HIPAA</li>
+                    <li>Multi-tenant SaaS · Webhooks</li>
                 </ul>
             </div>
         </section>
@@ -56,29 +58,29 @@
             <h2>Selected work</h2>
             <div class="projects">
                 <article class="project-card">
-                    <h3>EHR Bridge</h3>
-                    <p class="project-role">Backend engineer · healthcare integrations</p>
-                    <p>A unified API layer that translates between multiple EHR vendors (eClinicalWorks, Epic/OpenEpic, Athena, NextGen, Nextech, OncoEMR) and a normalized internal schema. Product teams hit one endpoint; the bridge handles vendor-specific auth, request shapes, and response transforms.</p>
+                    <h3>Ziva Health — EHR Integration Bridge</h3>
+                    <p class="project-role">Thinkitive Technologies · Backend owner</p>
+                    <p>Multi-tenant Django microservice that bridges Ziva Health with 20+ EHRs (Healthie, Elation, and others). Syncs patient records, SOAP notes, clinical documents, and appointments over REST &amp; GraphQL, with webhook-driven real-time exchange. Configurable per-clinic templates let new EHRs onboard via config rather than code — and a single request/response contract across all adapters keeps integration bugs rare.</p>
                     <ul class="tags">
-                        <li>Python</li><li>Django</li><li>FHIR</li><li>OAuth2</li>
+                        <li>Django</li><li>REST</li><li>GraphQL</li><li>Webhooks</li><li>Multi-tenant</li>
                     </ul>
                 </article>
 
                 <article class="project-card">
-                    <h3>Clinical Summary Workflows</h3>
-                    <p class="project-role">Workflow design</p>
-                    <p>Per-EHR transformers for patient, document, and visit queries — each vendor has its own quirks, but the caller sees one consistent contract. The <em>Try Out</em> section below demos this pattern end-to-end.</p>
+                    <h3>Isabella AI — HIPAA-Compliant Healthcare AI</h3>
+                    <p class="project-role">Thinkitive Technologies · Backend engineer</p>
+                    <p>FastAPI microservice powering natural-language conversations between patients and providers, built on <strong>LangGraph + LangChain</strong>. Stateful conversation graphs keep clinical context across sessions; structured patient history (past notes, appointments, records) grounds every LLM response. HIPAA-compliant by design — PHI isolation, audit logging, and secure handling baked in.</p>
                     <ul class="tags">
-                        <li>Transformers</li><li>REST</li><li>Normalized schema</li>
+                        <li>FastAPI</li><li>LangGraph</li><li>LangChain</li><li>LLM APIs</li><li>HIPAA</li>
                     </ul>
                 </article>
 
                 <article class="project-card">
-                    <h3>Bulk Data &amp; Scheduling</h3>
-                    <p class="project-role">Backend engineer</p>
-                    <p>Async bulk data pulls, scheduling endpoints, and provider/department sync across EHRs — with retries, backoff, and idempotent writes so replays are safe.</p>
+                    <h3>CCFood — WhatsApp Ordering Backend</h3>
+                    <p class="project-role">Thinkitive Project · Backend engineer</p>
+                    <p>Django backend powering a WhatsApp + SMS food-ordering flow over Twilio, with real-time order processing and 2FA restaurant onboarding APIs.</p>
                     <ul class="tags">
-                        <li>Celery</li><li>Async</li><li>Idempotency</li>
+                        <li>Django</li><li>Twilio</li><li>WhatsApp</li><li>2FA</li>
                     </ul>
                 </article>
             </div>
@@ -134,9 +136,11 @@
 
         <section id="contact" class="container section">
             <h2>Get in touch</h2>
-            <p>Have an integration problem, a healthcare data mess, or just want to say hi? I'd love to hear from you.</p>
+            <p>Have an integration problem, a healthcare data mess, or a healthcare-AI idea you want to sanity-check? I'd love to hear from you.</p>
             <ul class="contact-list">
-                <li><a href="mailto:aniket.pathak@thinkitive.com">aniket.pathak@thinkitive.com</a></li>
+                <li><a href="mailto:aniketpathak34@gmail.com">aniketpathak34@gmail.com</a></li>
+                <li><a href="tel:+917030344210">+91 70303 44210</a></li>
+                <li><a href="https://linkedin.com/in/aniket-pathak12" target="_blank" rel="noopener">linkedin.com/in/aniket-pathak12</a></li>
                 <li><a href="https://github.com/aniketpathak34" target="_blank" rel="noopener">github.com/aniketpathak34</a></li>
             </ul>
         </section>
