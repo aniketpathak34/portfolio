@@ -31,49 +31,52 @@ function patientDisplayName(patient) {
     return `${given} ${nm.family || ""}`.trim() || patient.id;
 }
 
-// Build an ECW-flavored envelope from a real FHIR patient so the demo
-// shows how the "same" patient would look coming out of ECW.
+// Build an ECW-flavored response from a real FHIR patient.  Shape mirrors
+// eClinicalWorks' legacy EMR Web / EBO API (non-FHIR): Response envelope
+// with ResponseCode/ResponseMessage and a PatientInfo array of records.
 function synthesizeEcwEnvelope(fhir) {
     const nm = fhir.name?.[0] || {};
     const phone = (fhir.telecom || []).find((t) => t.system === "phone");
+    const mobile = (fhir.telecom || []).find((t) => t.system === "phone" && t.use === "mobile");
     const email = (fhir.telecom || []).find((t) => t.system === "email");
     const addr = fhir.address?.[0] || {};
-    const genderMap = { female: "F", male: "M", other: "O", unknown: "U" };
+    const genderMap = { female: "Female", male: "Male", other: "Other", unknown: "Unknown" };
+    const maritalExt = (fhir.extension || []).find((e) =>
+        (e.url || "").toLowerCase().includes("marital")
+    );
     return {
-        ResponseHeader: {
-            Status: "OK",
-            ServerDateTime: new Date().toISOString(),
-            Source: "eCW Web EMR (simulated)",
-        },
-        PatientInformation: {
-            PatientID: fhir.id,
-            PatientName: {
-                FirstName: nm.given?.[0] || "",
-                MiddleInitial: nm.given?.[1] || null,
-                LastName: nm.family || "",
-            },
-            DOB: fhir.birthDate ? isoToMDY(fhir.birthDate) : null,
-            Gender: genderMap[fhir.gender] || "U",
-            ContactInfo: {
-                HomePhone: phone?.value || null,
-                EmailAddress: email?.value || null,
-            },
-            Address: {
-                AddressLine1: addr.line?.[0] || null,
-                City: addr.city || null,
-                State: addr.state || null,
-                ZipCode: addr.postalCode || null,
-            },
-            PrimaryProvider: fhir.generalPractitioner?.[0]?.display || null,
-            LastEncounter: null,
+        Response: {
+            ResponseCode: "0",
+            ResponseMessage: "Success",
+            ServerDateTime: new Date().toISOString().replace(/\.\d+Z$/, "Z"),
+            PatientInfo: [
+                {
+                    PatientID: fhir.id,
+                    AccountNumber: `AC-${(fhir.id || "").slice(0, 8).toUpperCase()}`,
+                    FirstName: nm.given?.[0] || "",
+                    MiddleName: nm.given?.[1] || "",
+                    LastName: nm.family || "",
+                    DateOfBirth: fhir.birthDate ? `${fhir.birthDate}T00:00:00` : null,
+                    Gender: genderMap[fhir.gender] || "Unknown",
+                    MaritalStatus: maritalExt?.valueCodeableConcept?.text || "Unknown",
+                    HomeAddress: {
+                        Address1: addr.line?.[0] || "",
+                        Address2: addr.line?.[1] || "",
+                        City: addr.city || "",
+                        State: addr.state || "",
+                        Zip: addr.postalCode || "",
+                        Country: addr.country || "USA",
+                    },
+                    HomePhone: phone?.value || "",
+                    MobilePhone: mobile?.value || phone?.value || "",
+                    EmailID: email?.value || "",
+                    PCPName: fhir.generalPractitioner?.[0]?.display || "",
+                    PreferredLanguage: "English",
+                    LastVisitDate: null,
+                },
+            ],
         },
     };
-}
-
-function isoToMDY(iso) {
-    const parts = iso.split("-");
-    if (parts.length !== 3) return iso;
-    return `${parts[1]}/${parts[2]}/${parts[0]}`;
 }
 
 function mdyToIso(mdy) {
@@ -89,30 +92,30 @@ function mdyToIso(mdy) {
 // -------------------------------------------------------------------
 const TRANSFORMERS = {
     ecw(raw) {
-        const p = raw.PatientInformation;
-        const name = p.PatientName;
+        const p = raw.Response?.PatientInfo?.[0] || {};
+        const dob = p.DateOfBirth ? p.DateOfBirth.split("T")[0] : null;
         return {
-            patient_id: p.PatientID,
+            patient_id: p.PatientID || null,
             name: {
-                first: name.FirstName || null,
-                middle: name.MiddleInitial || null,
-                last: name.LastName || null,
+                first: p.FirstName || null,
+                middle: p.MiddleName || null,
+                last: p.LastName || null,
             },
-            date_of_birth: mdyToIso(p.DOB),
-            gender: p.Gender === "F" ? "female" : p.Gender === "M" ? "male" : "unknown",
+            date_of_birth: dob,
+            gender: p.Gender === "Female" ? "female" : p.Gender === "Male" ? "male" : "unknown",
             contact: {
-                phone: p.ContactInfo?.HomePhone || null,
-                email: p.ContactInfo?.EmailAddress || null,
+                phone: p.HomePhone || p.MobilePhone || null,
+                email: p.EmailID || null,
             },
             address: {
-                line1: p.Address?.AddressLine1 || null,
-                city: p.Address?.City || null,
-                state: p.Address?.State || null,
-                postal_code: p.Address?.ZipCode || null,
-                country: "US",
+                line1: p.HomeAddress?.Address1 || null,
+                city: p.HomeAddress?.City || null,
+                state: p.HomeAddress?.State || null,
+                postal_code: p.HomeAddress?.Zip || null,
+                country: p.HomeAddress?.Country === "USA" ? "US" : (p.HomeAddress?.Country || "US"),
             },
-            primary_provider: p.PrimaryProvider || null,
-            last_encounter_date: mdyToIso(p.LastEncounter),
+            primary_provider: p.PCPName || null,
+            last_encounter_date: p.LastVisitDate || null,
             source_ehr: "eclinicalworks",
         };
     },
