@@ -215,6 +215,8 @@ nav a:hover { color: var(--text); text-decoration: none; }
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.5rem;
+    overflow: hidden;
+    min-width: 0;
 }
 
 .demo-controls {
@@ -285,25 +287,39 @@ nav a:hover { color: var(--text); text-decoration: none; }
     border-radius: var(--radius-sm);
     padding: 1rem;
     margin: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     font-family: var(--mono);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     line-height: 1.55;
     color: #d6deeb;
     max-height: 420px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
-    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    tab-size: 2;
 }
-.demo pre code { background: none; padding: 0; display: block; }
+.demo pre code {
+    background: none;
+    padding: 0;
+    display: block;
+    white-space: inherit;
+    word-break: inherit;
+    overflow-wrap: inherit;
+}
 
 .demo-panels {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
 }
-.demo-panel { min-width: 0; }
+.demo-panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
 .demo-panel-accent pre {
     border-color: rgba(94, 226, 195, 0.4);
     box-shadow: 0 0 0 1px rgba(94, 226, 195, 0.08) inset;
@@ -351,10 +367,12 @@ nav a:hover { color: var(--text); text-decoration: none; }
 .j-bool { color: #ffcb6b; }
 
 /* Responsive */
+@media (max-width: 960px) {
+    .demo-panels { grid-template-columns: 1fr; }
+}
 @media (max-width: 760px) {
     .about-grid { grid-template-columns: 1fr; }
     .demo-controls { grid-template-columns: 1fr; }
-    .demo-panels { grid-template-columns: 1fr; }
     nav a { margin-left: 1rem; font-size: 0.9rem; }
     .hero { padding: 3rem 1.25rem 2.5rem; }
     .section { padding: 2.5rem 1.25rem; }
