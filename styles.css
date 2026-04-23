@@ -448,6 +448,306 @@ nav a:hover { color: var(--text); text-decoration: none; }
 .j-null { color: #6b7280; font-style: italic; }
 .j-bool { color: #ffcb6b; }
 
+/* ───── Terminal block (About) ───── */
+.terminal {
+    background: #0b0d10;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-family: var(--mono);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+}
+.terminal-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    background: #12151a;
+    border-bottom: 1px solid var(--border);
+}
+.terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.terminal-dot-red { background: #ff6b6b; }
+.terminal-dot-amber { background: #ffcb6b; }
+.terminal-dot-green { background: #5ee2c3; }
+.terminal-title {
+    margin-left: 0.6rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+}
+.terminal-body {
+    padding: 1rem 1.1rem 1.25rem;
+    margin: 0;
+    color: #d6deeb;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    min-height: 14rem;
+}
+.terminal-body .prompt { color: var(--accent-2); }
+.terminal-body .cmd { color: var(--text); }
+.terminal-body .out { color: var(--muted); }
+.terminal-body .key { color: var(--accent); }
+.terminal-body .str { color: #addb67; }
+.terminal-cursor {
+    display: inline-block;
+    color: var(--accent-2);
+    animation: terminal-blink 1s steps(2) infinite;
+    margin-left: 2px;
+}
+.terminal-cursor.is-done { opacity: 0.4; }
+@keyframes terminal-blink {
+    50% { opacity: 0; }
+}
+
+/* ───── Coverage matrix ───── */
+.matrix-wrap {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+}
+.matrix-legend {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    font-family: var(--mono);
+}
+.matrix-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.matrix-scroll { overflow-x: auto; }
+.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    min-width: 640px;
+}
+.matrix th, .matrix td {
+    padding: 0.65rem 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+.matrix thead th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.matrix tbody th {
+    text-align: left;
+    color: var(--text);
+    font-weight: 500;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 0.84rem;
+}
+.matrix tbody tr:hover {
+    background: rgba(124, 156, 255, 0.04);
+}
+.matrix-corner {
+    text-align: left !important;
+    color: var(--muted) !important;
+    font-family: var(--mono);
+}
+.m-dot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    vertical-align: middle;
+    transition: transform 0.15s ease;
+}
+.m-yes     { background: var(--accent-2); border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(94, 226, 195, 0.12); }
+.m-partial { background: transparent; border-color: var(--accent); box-shadow: inset 0 0 0 4px var(--accent); }
+.m-no      { background: transparent; border-color: #3a4252; }
+.matrix td:hover .m-dot { transform: scale(1.25); }
+
+/* ───── Demo panel metric chip ───── */
+.demo-panel-head { gap: 0.5rem; }
+.demo-metric {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent-2);
+    background: rgba(94, 226, 195, 0.08);
+    border: 1px solid rgba(94, 226, 195, 0.25);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.demo-metric[hidden] { display: none; }
+
+/* ───── Command palette ───── */
+.cmdk-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1.25rem;
+    padding: 0.35rem 0.6rem 0.35rem 0.75rem;
+    background: var(--bg-soft);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+.cmdk-trigger:hover { color: var(--text); border-color: var(--accent); }
+.cmdk-trigger kbd {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+}
+
+.cmdk {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 10vh 1rem 1rem;
+    z-index: 200;
+}
+.cmdk.is-open { display: flex; }
+.cmdk-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 7, 10, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: cmdk-fade 0.15s ease;
+}
+.cmdk-card {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    background: #12151a;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    overflow: hidden;
+    animation: cmdk-pop 0.18s ease;
+}
+@keyframes cmdk-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cmdk-pop  { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: none; } }
+.cmdk-input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+.cmdk-icon { color: var(--muted); flex-shrink: 0; }
+.cmdk-input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.98rem;
+    padding: 0.2rem 0;
+}
+.cmdk-esc {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.45rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+}
+.cmdk-list {
+    list-style: none;
+    padding: 0.5rem;
+    margin: 0;
+    max-height: 52vh;
+    overflow-y: auto;
+}
+.cmdk-group {
+    padding: 0.45rem 0.65rem 0.3rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: var(--mono);
+}
+.cmdk-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text);
+}
+.cmdk-item-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+    font-size: 0.8rem;
+}
+.cmdk-item-text { flex: 1; min-width: 0; }
+.cmdk-item-title { font-size: 0.92rem; }
+.cmdk-item-hint { font-size: 0.75rem; color: var(--muted); font-family: var(--mono); }
+.cmdk-item.is-active, .cmdk-item:hover {
+    background: rgba(124, 156, 255, 0.1);
+}
+.cmdk-empty {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+}
+.cmdk-footer {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0.55rem 0.9rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+}
+.cmdk-footer kbd {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.05rem 0.35rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    margin: 0 0.2rem 0 0;
+}
+
 /* Scroll reveal */
 .fade-in {
     opacity: 0;
@@ -479,4 +779,6 @@ nav a:hover { color: var(--text); text-decoration: none; }
     .section { padding: 2.5rem 1.25rem; }
     .demo-tabs { overflow-x: auto; flex-wrap: nowrap; }
     .demo-tab { white-space: nowrap; }
+    .cmdk-trigger span { display: none; }
+    .cmdk-trigger { padding: 0.35rem 0.55rem; margin-left: 0.75rem; }
 }

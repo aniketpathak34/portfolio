@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
     <header class="site-header">
@@ -42,8 +42,13 @@
             <nav>
                 <a href="#about">About</a>
                 <a href="#projects">Projects</a>
+                <a href="#coverage">Coverage</a>
                 <a href="#tryout">Try&nbsp;Out</a>
                 <a href="#contact">Contact</a>
+                <button type="button" id="cmdk-open" class="cmdk-trigger" aria-label="Open command palette">
+                    <span>Search</span>
+                    <kbd>⌘K</kbd>
+                </button>
             </nav>
         </div>
     </header>
@@ -71,16 +76,15 @@
                     <p>Outside my day job I'm selectively open to <strong>freelance &amp; consulting</strong> work in the same space — backend, EHR integration, and healthcare AI engagements.</p>
                     <p>Lately I've been building HIPAA-compliant AI microservices on top of <strong>LangGraph</strong> and <strong>LangChain</strong>: stateful multi-turn clinical conversations that stay grounded in a patient's real history. I care about clean contracts, boring reliability, and shipping.</p>
                 </div>
-                <ul class="skills">
-                    <li>Python · Django · FastAPI</li>
-                    <li>REST · GraphQL</li>
-                    <li>LangGraph · LangChain</li>
-                    <li>LLM APIs · Agentic AI</li>
-                    <li>Celery · Redis · PostgreSQL</li>
-                    <li>Docker · GitHub Actions · AWS</li>
-                    <li>EHR Integration · HIPAA</li>
-                    <li>Multi-tenant SaaS · Webhooks</li>
-                </ul>
+                <div class="terminal" id="terminal">
+                    <div class="terminal-head">
+                        <span class="terminal-dot terminal-dot-red"></span>
+                        <span class="terminal-dot terminal-dot-amber"></span>
+                        <span class="terminal-dot terminal-dot-green"></span>
+                        <span class="terminal-title">aniket@portfolio ~ </span>
+                    </div>
+                    <pre class="terminal-body"><code id="terminal-output"></code><span class="terminal-cursor" id="terminal-cursor">▋</span></pre>
+                </div>
             </div>
         </section>
 
@@ -140,6 +144,125 @@
                         <li>Django</li><li>Twilio</li><li>WhatsApp</li><li>2FA</li>
                     </ul>
                 </article>
+            </div>
+        </section>
+
+        <section id="coverage" class="container section">
+            <h2>Integration coverage</h2>
+            <p class="section-lede">A map of which EHRs speak which operations across the adapters I've worked on. Each cell is a contract point — the Bridge makes them look like one API upstream.</p>
+            <div class="matrix-wrap">
+                <div class="matrix-legend">
+                    <span><i class="m-dot m-yes"></i> Shipped</span>
+                    <span><i class="m-dot m-partial"></i> Partial / subset</span>
+                    <span><i class="m-dot m-no"></i> Not wired</span>
+                </div>
+                <div class="matrix-scroll">
+                    <table class="matrix">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="matrix-corner">EHR \ Operation</th>
+                                <th scope="col">Patient</th>
+                                <th scope="col">Conditions</th>
+                                <th scope="col">Medications</th>
+                                <th scope="col">Vitals</th>
+                                <th scope="col">Documents</th>
+                                <th scope="col">Scheduling</th>
+                                <th scope="col">Bulk data</th>
+                                <th scope="col">Webhooks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">eClinicalWorks</th>
+                                <td><i class="m-dot m-yes" title="Shipped"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Epic / OpenEpic</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Athena (FHIR R4)</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">NextGen</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Nextech (PM &amp; ICP)</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Healthie</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Elation</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">OncoEMR</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-no"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -226,6 +349,7 @@
                             <div class="demo-panel-head">
                                 <span class="demo-label">Raw vendor response</span>
                                 <span class="demo-hint" id="raw-hint">—</span>
+                                <span class="demo-metric" id="raw-metric" hidden></span>
                             </div>
                             <pre><code id="raw-response">—</code></pre>
                         </div>
@@ -233,6 +357,7 @@
                             <div class="demo-panel-head">
                                 <span class="demo-label">Normalized response</span>
                                 <span class="demo-hint">Same shape, every EHR</span>
+                                <span class="demo-metric" id="norm-metric" hidden></span>
                             </div>
                             <pre><code id="normalized-response">—</code></pre>
                         </div>
@@ -255,6 +380,23 @@
         </section>
     </main>
 
+    <div id="cmdk" class="cmdk" aria-hidden="true" role="dialog" aria-label="Command palette" aria-modal="true">
+        <div class="cmdk-backdrop" data-cmdk-close></div>
+        <div class="cmdk-card">
+            <div class="cmdk-input-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="cmdk-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input class="cmdk-input" id="cmdk-input" type="text" placeholder="Jump to a section, copy an email, switch a tab…" aria-label="Command palette search" autocomplete="off" spellcheck="false">
+                <kbd class="cmdk-esc">esc</kbd>
+            </div>
+            <ul class="cmdk-list" id="cmdk-list" role="listbox"></ul>
+            <div class="cmdk-footer">
+                <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+                <span><kbd>↵</kbd> select</span>
+                <span><kbd>esc</kbd> close</span>
+            </div>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <div class="container">
             <span>© <span id="year"></span> Aniket Pathak</span>
@@ -262,6 +404,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>

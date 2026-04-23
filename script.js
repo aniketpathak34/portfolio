@@ -371,12 +371,22 @@ async function fetchActive() {
     }
 }
 
+function byteSize(obj) {
+    return new Blob([JSON.stringify(obj)]).size;
+}
+
 async function fetchPatientTab(pid) {
     const ehr = $ehr.value;
     setStatus(ehr === "epic" ? "Calling SMART Health IT FHIR sandbox…" : "Synthesizing ECW envelope…");
+    clearMetrics();
+
+    let fetchMs = 0;
     if (!currentPatient || currentPatient.id !== pid) {
-        currentPatient = await fetchFhirPatient(pid);
+        const t = await timedFetch(`${FHIR_BASE}/Patient/${encodeURIComponent(pid)}`);
+        currentPatient = t.json;
+        fetchMs = t.ms;
     }
+
     let rawResponse, key;
     if (ehr === "epic") {
         rawResponse = currentPatient;
@@ -385,19 +395,35 @@ async function fetchPatientTab(pid) {
         rawResponse = synthesizeEcwEnvelope(currentPatient);
         key = "ecw";
     }
+
+    const t0 = performance.now();
     const normalized = PATIENT_TRANSFORMERS[key](rawResponse);
+    const transformMs = performance.now() - t0;
+
     $raw.innerHTML = highlightJson(rawResponse);
     $norm.innerHTML = highlightJson(normalized);
+    showMetric($rawMetric, ehr === "epic" ? (fetchMs || 0) : transformMs, byteSize(rawResponse));
+    showMetric($normMetric, transformMs, byteSize(normalized));
+
     const tag = ehr === "epic" ? "live FHIR R4" : "simulated ECW";
     setStatus(`200 OK · ${tag} · normalized via ${key.toUpperCase()} transformer`, "ok");
 }
 
 async function fetchResourceTab(tab, pid) {
     setStatus(`Calling SMART Health IT sandbox for ${tab}…`);
-    const bundle = await fetchJson(RESOURCES[tab].endpoint(pid));
+    clearMetrics();
+    const t = await timedFetch(RESOURCES[tab].endpoint(pid));
+    const bundle = t.json;
+
+    const t0 = performance.now();
     const normalized = RESOURCES[tab].normalize(bundle);
+    const transformMs = performance.now() - t0;
+
     $raw.innerHTML = highlightJson(bundle);
     $norm.innerHTML = highlightJson(normalized);
+    showMetric($rawMetric, t.ms, t.bytes);
+    showMetric($normMetric, transformMs, byteSize(normalized));
+
     const count = normalized.length;
     setStatus(`200 OK · live FHIR R4 · ${count} ${count === 1 ? "record" : "records"} normalized`, "ok");
 }
@@ -418,6 +444,237 @@ $btn.addEventListener("click", fetchActive);
 $tabs.forEach((el) => {
     el.addEventListener("click", () => setTab(el.dataset.tab));
 });
+
+// -------------------------------------------------------------------
+// Latency / payload chip
+// -------------------------------------------------------------------
+const $rawMetric = document.getElementById("raw-metric");
+const $normMetric = document.getElementById("norm-metric");
+
+function showMetric(el, ms, bytes) {
+    if (!el) return;
+    el.hidden = false;
+    const kb = bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
+    el.textContent = `${Math.round(ms)} ms · ${kb}`;
+}
+function clearMetrics() {
+    if ($rawMetric) $rawMetric.hidden = true;
+    if ($normMetric) $normMetric.hidden = true;
+}
+
+// Instrumented fetch that also reports bytes
+async function timedFetch(url) {
+    const t0 = performance.now();
+    const resp = await fetch(url);
+    const text = await resp.text();
+    const t1 = performance.now();
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} · ${url.replace(FHIR_BASE, "")}`);
+    return { ms: t1 - t0, bytes: new Blob([text]).size, json: JSON.parse(text) };
+}
+
+// -------------------------------------------------------------------
+// Terminal typing animation
+// -------------------------------------------------------------------
+function runTerminal() {
+    const out = document.getElementById("terminal-output");
+    const cursor = document.getElementById("terminal-cursor");
+    if (!out) return;
+
+    const lines = [
+        { delay: 300, html: '<span class="prompt">$</span> <span class="cmd">whoami</span>\n' },
+        { delay: 220, html: '<span class="out">Aniket Pathak — Backend Engineer (Pune, IN)</span>\n\n' },
+        { delay: 250, html: '<span class="prompt">$</span> <span class="cmd">cat stack.md</span>\n' },
+        { delay: 180, html: '<span class="key">core</span>     <span class="out">Python · Django · FastAPI · Celery · PostgreSQL</span>\n' },
+        { delay: 180, html: '<span class="key">ai</span>       <span class="out">LangGraph · LangChain · LLM APIs · Agentic AI</span>\n' },
+        { delay: 180, html: '<span class="key">cloud</span>    <span class="out">Docker · GitHub Actions · AWS (EC2, S3)</span>\n' },
+        { delay: 180, html: '<span class="key">domain</span>   <span class="out">FHIR · HIPAA · Multi-tenant SaaS · Webhooks</span>\n\n' },
+        { delay: 260, html: '<span class="prompt">$</span> <span class="cmd">echo $STATUS</span>\n' },
+        { delay: 220, html: '<span class="str">"shipping quietly · open to freelance · coffee welcome"</span>\n' },
+    ];
+
+    let i = 0;
+    function step() {
+        if (i >= lines.length) {
+            cursor.classList.add("is-done");
+            return;
+        }
+        out.insertAdjacentHTML("beforeend", lines[i].html);
+        i++;
+        setTimeout(step, lines[i - 1].delay);
+    }
+
+    // Start when terminal is visible (so hero users actually see the effect)
+    const term = document.getElementById("terminal");
+    if (!term || !("IntersectionObserver" in window)) {
+        step();
+        return;
+    }
+    const io = new IntersectionObserver(
+        (entries) => {
+            if (entries.some((e) => e.isIntersecting)) {
+                io.disconnect();
+                step();
+            }
+        },
+        { threshold: 0.3 }
+    );
+    io.observe(term);
+}
+
+// -------------------------------------------------------------------
+// Command palette (⌘K / Ctrl+K)
+// -------------------------------------------------------------------
+function wireCmdK() {
+    const root = document.getElementById("cmdk");
+    const input = document.getElementById("cmdk-input");
+    const list = document.getElementById("cmdk-list");
+    const trigger = document.getElementById("cmdk-open");
+    if (!root || !input || !list) return;
+
+    const actions = [
+        { group: "Go to", icon: "§", title: "About", hint: "#about", run: () => jumpTo("#about") },
+        { group: "Go to", icon: "§", title: "Selected work", hint: "#projects", run: () => jumpTo("#projects") },
+        { group: "Go to", icon: "§", title: "Integration coverage", hint: "#coverage", run: () => jumpTo("#coverage") },
+        { group: "Go to", icon: "§", title: "Try it out (Bridge Console)", hint: "#tryout", run: () => jumpTo("#tryout") },
+        { group: "Go to", icon: "§", title: "Contact", hint: "#contact", run: () => jumpTo("#contact") },
+
+        { group: "Bridge Console", icon: "▸", title: "Switch to Patient tab", hint: "tab", run: () => { setTab("patient"); jumpTo("#tryout"); } },
+        { group: "Bridge Console", icon: "▸", title: "Switch to Conditions tab", hint: "tab", run: () => { setTab("conditions"); jumpTo("#tryout"); } },
+        { group: "Bridge Console", icon: "▸", title: "Switch to Medications tab", hint: "tab", run: () => { setTab("medications"); jumpTo("#tryout"); } },
+        { group: "Bridge Console", icon: "▸", title: "Switch to Vitals tab", hint: "tab", run: () => { setTab("vitals"); jumpTo("#tryout"); } },
+
+        { group: "Actions", icon: "↓", title: "Download CV", hint: "aniket-pathak-resume.pdf", run: () => { window.open("aniket-pathak-resume.pdf", "_blank"); } },
+        { group: "Actions", icon: "✉", title: "Copy email", hint: "aniketpathak34@gmail.com", run: async () => {
+            try {
+                await navigator.clipboard.writeText("aniketpathak34@gmail.com");
+                toast("Email copied");
+            } catch {
+                location.href = "mailto:aniketpathak34@gmail.com";
+            }
+        } },
+        { group: "Actions", icon: "✉", title: "Email me", hint: "mailto:", run: () => { location.href = "mailto:aniketpathak34@gmail.com"; } },
+        { group: "Open", icon: "↗", title: "GitHub · aniketpathak34", hint: "github.com", run: () => window.open("https://github.com/aniketpathak34", "_blank") },
+        { group: "Open", icon: "↗", title: "LinkedIn · aniket-pathak12", hint: "linkedin.com", run: () => window.open("https://linkedin.com/in/aniket-pathak12", "_blank") },
+    ];
+
+    let activeIdx = 0;
+    let filtered = actions.slice();
+
+    function open() {
+        root.classList.add("is-open");
+        root.setAttribute("aria-hidden", "false");
+        input.value = "";
+        filtered = actions.slice();
+        activeIdx = 0;
+        render();
+        requestAnimationFrame(() => input.focus());
+    }
+    function close() {
+        root.classList.remove("is-open");
+        root.setAttribute("aria-hidden", "true");
+    }
+
+    function filter(q) {
+        const s = q.trim().toLowerCase();
+        if (!s) return actions.slice();
+        return actions.filter((a) => {
+            const hay = `${a.title} ${a.hint} ${a.group}`.toLowerCase();
+            return s.split(/\s+/).every((tok) => hay.includes(tok));
+        });
+    }
+
+    function render() {
+        list.innerHTML = "";
+        if (!filtered.length) {
+            const li = document.createElement("li");
+            li.className = "cmdk-empty";
+            li.textContent = "No results.";
+            list.appendChild(li);
+            return;
+        }
+        let lastGroup = null;
+        filtered.forEach((a, i) => {
+            if (a.group !== lastGroup) {
+                const head = document.createElement("li");
+                head.className = "cmdk-group";
+                head.textContent = a.group;
+                list.appendChild(head);
+                lastGroup = a.group;
+            }
+            const li = document.createElement("li");
+            li.className = "cmdk-item" + (i === activeIdx ? " is-active" : "");
+            li.dataset.idx = String(i);
+            li.setAttribute("role", "option");
+            li.innerHTML =
+                `<span class="cmdk-item-icon">${a.icon}</span>` +
+                `<span class="cmdk-item-text"><span class="cmdk-item-title"></span></span>` +
+                `<span class="cmdk-item-hint"></span>`;
+            li.querySelector(".cmdk-item-title").textContent = a.title;
+            li.querySelector(".cmdk-item-hint").textContent = a.hint;
+            li.addEventListener("mouseenter", () => { activeIdx = i; updateActive(); });
+            li.addEventListener("click", () => run(i));
+            list.appendChild(li);
+        });
+    }
+
+    function updateActive() {
+        const items = list.querySelectorAll(".cmdk-item");
+        items.forEach((el) => {
+            el.classList.toggle("is-active", Number(el.dataset.idx) === activeIdx);
+            if (Number(el.dataset.idx) === activeIdx) {
+                el.scrollIntoView({ block: "nearest" });
+            }
+        });
+    }
+
+    function run(idx) {
+        const a = filtered[idx];
+        if (!a) return;
+        close();
+        setTimeout(() => a.run(), 10);
+    }
+
+    function jumpTo(hash) {
+        const el = document.querySelector(hash);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function toast(msg) {
+        const t = document.createElement("div");
+        t.textContent = msg;
+        t.style.cssText =
+            "position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);" +
+            "background:#12151a;color:#e6e9ef;border:1px solid #232a33;" +
+            "padding:.55rem 1rem;border-radius:8px;font-family:JetBrains Mono,monospace;" +
+            "font-size:.82rem;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.4);";
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 1600);
+    }
+
+    // Events
+    input.addEventListener("input", () => { filtered = filter(input.value); activeIdx = 0; render(); });
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") { e.preventDefault(); activeIdx = Math.min(filtered.length - 1, activeIdx + 1); updateActive(); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); activeIdx = Math.max(0, activeIdx - 1); updateActive(); }
+        else if (e.key === "Enter") { e.preventDefault(); run(activeIdx); }
+        else if (e.key === "Escape") { close(); }
+    });
+    root.querySelector("[data-cmdk-close]").addEventListener("click", close);
+    if (trigger) trigger.addEventListener("click", open);
+
+    window.addEventListener("keydown", (e) => {
+        const k = e.key.toLowerCase();
+        if ((e.metaKey || e.ctrlKey) && k === "k") { e.preventDefault(); open(); }
+        else if (e.key === "Escape" && root.classList.contains("is-open")) { close(); }
+        else if (e.key === "/" && !root.classList.contains("is-open")) {
+            const tag = (document.activeElement && document.activeElement.tagName) || "";
+            if (!["INPUT", "TEXTAREA", "SELECT"].includes(tag)) { e.preventDefault(); open(); }
+        }
+    });
+
+    // Expose for other code (e.g., future plugins)
+    window.__openCmdK = open;
+}
 
 // -------------------------------------------------------------------
 // Scroll reveal
@@ -447,5 +704,7 @@ function wireScrollReveal() {
 // Boot
 // -------------------------------------------------------------------
 wireScrollReveal();
+wireCmdK();
+runTerminal();
 updateRequestPreview();
 populatePatientDropdown();
