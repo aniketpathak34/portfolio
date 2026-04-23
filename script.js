@@ -8,20 +8,22 @@ const FHIR_BASE = "https://r4.smarthealthit.org";
 const SAMPLE_COUNT = 6;
 
 // -------------------------------------------------------------------
-// Data helpers
+// Fetch helpers
 // -------------------------------------------------------------------
 
+async function fetchJson(url) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} · ${url.replace(FHIR_BASE, "")}`);
+    return resp.json();
+}
+
 async function fetchPatientList() {
-    const resp = await fetch(`${FHIR_BASE}/Patient?_count=${SAMPLE_COUNT}&_sort=-_lastUpdated`);
-    if (!resp.ok) throw new Error(`Patient list fetch failed: HTTP ${resp.status}`);
-    const bundle = await resp.json();
+    const bundle = await fetchJson(`${FHIR_BASE}/Patient?_count=${SAMPLE_COUNT}&_sort=-_lastUpdated`);
     return (bundle.entry || []).map((e) => e.resource).filter(Boolean);
 }
 
 async function fetchFhirPatient(id) {
-    const resp = await fetch(`${FHIR_BASE}/Patient/${encodeURIComponent(id)}`);
-    if (!resp.ok) throw new Error(`Patient fetch failed: HTTP ${resp.status}`);
-    return resp.json();
+    return fetchJson(`${FHIR_BASE}/Patient/${encodeURIComponent(id)}`);
 }
 
 function patientDisplayName(patient) {
@@ -31,9 +33,10 @@ function patientDisplayName(patient) {
     return `${given} ${nm.family || ""}`.trim() || patient.id;
 }
 
-// Build an ECW-flavored response from a real FHIR patient.  Shape mirrors
-// eClinicalWorks' legacy EMR Web / EBO API (non-FHIR): Response envelope
-// with ResponseCode/ResponseMessage and a PatientInfo array of records.
+// -------------------------------------------------------------------
+// ECW legacy envelope (simulated from a real FHIR patient)
+// Shape mirrors eClinicalWorks' legacy EMR Web / EBO API (non-FHIR).
+// -------------------------------------------------------------------
 function synthesizeEcwEnvelope(fhir) {
     const nm = fhir.name?.[0] || {};
     const phone = (fhir.telecom || []).find((t) => t.system === "phone");
@@ -79,18 +82,114 @@ function synthesizeEcwEnvelope(fhir) {
     };
 }
 
-function mdyToIso(mdy) {
-    if (!mdy) return null;
-    const parts = mdy.split("/");
-    if (parts.length !== 3) return mdy;
-    const [m, d, y] = parts;
-    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
-}
+// -------------------------------------------------------------------
+// Per-resource definitions: endpoint, raw-hint, and normalizer.
+// Each normalizer returns a compact, client-friendly shape.
+// -------------------------------------------------------------------
+const RESOURCES = {
+    patient: {
+        label: "Patient",
+        rawHint: "Live · FHIR R4",
+        // Patient is special: Epic live vs ECW simulated toggle lives here
+        showEhrToggle: true,
+    },
+    conditions: {
+        label: "Conditions",
+        rawHint: "Live · FHIR R4 Bundle",
+        endpoint: (pid) =>
+            `${FHIR_BASE}/Condition?patient=${encodeURIComponent(pid)}&_count=15&_sort=-onset-date`,
+        normalize(bundle) {
+            return (bundle.entry || []).map((e) => {
+                const r = e.resource || {};
+                return {
+                    id: r.id,
+                    display:
+                        r.code?.text ||
+                        r.code?.coding?.[0]?.display ||
+                        r.code?.coding?.[0]?.code ||
+                        "Unknown",
+                    code: r.code?.coding?.[0]?.code || null,
+                    code_system: r.code?.coding?.[0]?.system || null,
+                    clinical_status: r.clinicalStatus?.coding?.[0]?.code || null,
+                    verification_status: r.verificationStatus?.coding?.[0]?.code || null,
+                    onset_date:
+                        r.onsetDateTime ||
+                        r.onsetPeriod?.start ||
+                        r.recordedDate ||
+                        null,
+                };
+            });
+        },
+    },
+    medications: {
+        label: "Medications",
+        rawHint: "Live · FHIR R4 Bundle",
+        endpoint: (pid) =>
+            `${FHIR_BASE}/MedicationRequest?patient=${encodeURIComponent(pid)}&_count=15&_sort=-authoredon`,
+        normalize(bundle) {
+            return (bundle.entry || []).map((e) => {
+                const r = e.resource || {};
+                const med =
+                    r.medicationCodeableConcept?.text ||
+                    r.medicationCodeableConcept?.coding?.[0]?.display ||
+                    r.medicationReference?.display ||
+                    "Unknown";
+                const dosage = r.dosageInstruction?.[0]?.text || null;
+                return {
+                    id: r.id,
+                    medication: med,
+                    status: r.status || null,
+                    intent: r.intent || null,
+                    authored_on: r.authoredOn || null,
+                    dosage,
+                };
+            });
+        },
+    },
+    vitals: {
+        label: "Vitals",
+        rawHint: "Live · FHIR R4 Bundle",
+        endpoint: (pid) =>
+            `${FHIR_BASE}/Observation?category=vital-signs&patient=${encodeURIComponent(pid)}&_count=15&_sort=-date`,
+        normalize(bundle) {
+            return (bundle.entry || []).map((e) => {
+                const r = e.resource || {};
+                const display =
+                    r.code?.text ||
+                    r.code?.coding?.[0]?.display ||
+                    r.code?.coding?.[0]?.code ||
+                    "Observation";
+                let value = null;
+                let unit = null;
+                if (r.valueQuantity) {
+                    value = r.valueQuantity.value;
+                    unit = r.valueQuantity.unit || r.valueQuantity.code || null;
+                } else if (r.component?.length) {
+                    value = r.component
+                        .map((c) => {
+                            const v = c.valueQuantity?.value;
+                            const u = c.valueQuantity?.unit || c.valueQuantity?.code || "";
+                            const label = c.code?.coding?.[0]?.display || c.code?.text || "";
+                            return `${label ? label + ": " : ""}${v ?? "?"}${u ? " " + u : ""}`;
+                        })
+                        .join(" · ");
+                }
+                return {
+                    id: r.id,
+                    display,
+                    code: r.code?.coding?.[0]?.code || null,
+                    value,
+                    unit,
+                    effective: r.effectiveDateTime || r.effectivePeriod?.start || null,
+                    status: r.status || null,
+                };
+            });
+        },
+    },
+};
 
-// -------------------------------------------------------------------
-// Transformers — one per EHR, both return the same normalized shape.
-// -------------------------------------------------------------------
-const TRANSFORMERS = {
+// Patient-tab transformers (Epic vs ECW → same normalized shape)
+const PATIENT_TRANSFORMERS = {
     ecw(raw) {
         const p = raw.Response?.PatientInfo?.[0] || {};
         const dob = p.DateOfBirth ? p.DateOfBirth.split("T")[0] : null;
@@ -152,14 +251,11 @@ const TRANSFORMERS = {
 };
 
 // -------------------------------------------------------------------
-// Rendering
+// Rendering helpers
 // -------------------------------------------------------------------
 
 function escapeHtml(s) {
-    return s
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function highlightJson(obj) {
@@ -181,9 +277,10 @@ function highlightJson(obj) {
 }
 
 // -------------------------------------------------------------------
-// Wire-up
+// State & DOM
 // -------------------------------------------------------------------
 const $ehr = document.getElementById("ehr-select");
+const $ehrCtl = document.getElementById("ehr-control");
 const $pid = document.getElementById("patient-id");
 const $btn = document.getElementById("fetch-btn");
 const $req = document.getElementById("request-preview");
@@ -191,26 +288,47 @@ const $raw = document.getElementById("raw-response");
 const $norm = document.getElementById("normalized-response");
 const $rawHint = document.getElementById("raw-hint");
 const $status = document.getElementById("status");
+const $tabs = document.querySelectorAll(".demo-tab");
 
-// Cache the real FHIR patient we've loaded, so ECW can synthesize from it
-// without hitting the network again.
-let currentPatient = null;
-
-function updateRequestPreview() {
-    const ehr = $ehr.value;
-    const pid = $pid.value || "—";
-    if (ehr === "epic") {
-        $req.textContent = `GET ${FHIR_BASE}/Patient/${pid}`;
-        $rawHint.textContent = "Live · FHIR R4";
-    } else {
-        $req.textContent = `GET /api/v1/clinical-summary/patient?ehr=ecw&patient_id=${pid}`;
-        $rawHint.textContent = "Simulated · ECW envelope";
-    }
-}
+let activeTab = "patient";
+let currentPatient = null; // cached FHIR Patient resource
 
 function setStatus(msg, kind = "") {
     $status.textContent = msg;
     $status.className = "demo-status" + (kind ? " " + kind : "");
+}
+
+function updateRequestPreview() {
+    const pid = $pid.value || "—";
+    if (activeTab === "patient") {
+        const ehr = $ehr.value;
+        if (ehr === "epic") {
+            $req.textContent = `GET ${FHIR_BASE}/Patient/${pid}`;
+            $rawHint.textContent = RESOURCES.patient.rawHint;
+        } else {
+            $req.textContent = `GET /api/v1/clinical-summary/patient?ehr=ecw&patient_id=${pid}`;
+            $rawHint.textContent = "Simulated · ECW envelope";
+        }
+        $btn.textContent = "Fetch patient";
+    } else {
+        const endpoint = RESOURCES[activeTab].endpoint(pid);
+        $req.textContent = `GET ${endpoint}`;
+        $rawHint.textContent = RESOURCES[activeTab].rawHint;
+        $btn.textContent = `Fetch ${RESOURCES[activeTab].label.toLowerCase()}`;
+    }
+}
+
+function setTab(tab) {
+    activeTab = tab;
+    $tabs.forEach((el) => {
+        const on = el.dataset.tab === tab;
+        el.classList.toggle("is-active", on);
+        el.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    // Only Patient tab uses the EHR toggle
+    $ehrCtl.hidden = !RESOURCES[tab].showEhrToggle;
+    updateRequestPreview();
+    fetchActive();
 }
 
 async function populatePatientDropdown() {
@@ -226,48 +344,24 @@ async function populatePatientDropdown() {
             $pid.appendChild(opt);
         }
         $btn.disabled = false;
-        setStatus("Ready. Pick an EHR and hit Fetch patient.", "ok");
+        setStatus("Ready. Switch tabs to see Conditions / Medications / Vitals for this patient.", "ok");
         updateRequestPreview();
-        // Kick off an initial fetch so the demo isn't empty.
-        fetchPatient();
+        fetchActive();
     } catch (err) {
         setStatus(`Couldn't load patient list: ${err.message}`, "err");
     }
 }
 
-async function fetchPatient() {
-    const ehr = $ehr.value;
+async function fetchActive() {
     const pid = $pid.value;
-    if (!pid) {
-        setStatus("Pick a patient first.", "err");
-        return;
-    }
+    if (!pid) return;
     $btn.disabled = true;
-    setStatus(ehr === "epic" ? "Calling SMART Health IT FHIR sandbox…" : "Synthesizing ECW envelope…");
-
     try {
-        // Always fetch the real FHIR patient (live).  For ECW we then
-        // reshape the same patient into an ECW envelope.
-        if (!currentPatient || currentPatient.id !== pid) {
-            currentPatient = await fetchFhirPatient(pid);
-        }
-
-        let rawResponse, transformerKey;
-        if (ehr === "epic") {
-            rawResponse = currentPatient;
-            transformerKey = "epic";
+        if (activeTab === "patient") {
+            await fetchPatientTab(pid);
         } else {
-            rawResponse = synthesizeEcwEnvelope(currentPatient);
-            transformerKey = "ecw";
+            await fetchResourceTab(activeTab, pid);
         }
-
-        const normalized = TRANSFORMERS[transformerKey](rawResponse);
-
-        $raw.innerHTML = highlightJson(rawResponse);
-        $norm.innerHTML = highlightJson(normalized);
-
-        const tag = ehr === "epic" ? "live FHIR R4" : "simulated ECW";
-        setStatus(`200 OK · ${tag} · normalized via ${transformerKey.toUpperCase()} transformer`, "ok");
     } catch (err) {
         setStatus(`Error: ${err.message}`, "err");
         $raw.textContent = "—";
@@ -277,17 +371,81 @@ async function fetchPatient() {
     }
 }
 
+async function fetchPatientTab(pid) {
+    const ehr = $ehr.value;
+    setStatus(ehr === "epic" ? "Calling SMART Health IT FHIR sandbox…" : "Synthesizing ECW envelope…");
+    if (!currentPatient || currentPatient.id !== pid) {
+        currentPatient = await fetchFhirPatient(pid);
+    }
+    let rawResponse, key;
+    if (ehr === "epic") {
+        rawResponse = currentPatient;
+        key = "epic";
+    } else {
+        rawResponse = synthesizeEcwEnvelope(currentPatient);
+        key = "ecw";
+    }
+    const normalized = PATIENT_TRANSFORMERS[key](rawResponse);
+    $raw.innerHTML = highlightJson(rawResponse);
+    $norm.innerHTML = highlightJson(normalized);
+    const tag = ehr === "epic" ? "live FHIR R4" : "simulated ECW";
+    setStatus(`200 OK · ${tag} · normalized via ${key.toUpperCase()} transformer`, "ok");
+}
+
+async function fetchResourceTab(tab, pid) {
+    setStatus(`Calling SMART Health IT sandbox for ${tab}…`);
+    const bundle = await fetchJson(RESOURCES[tab].endpoint(pid));
+    const normalized = RESOURCES[tab].normalize(bundle);
+    $raw.innerHTML = highlightJson(bundle);
+    $norm.innerHTML = highlightJson(normalized);
+    const count = normalized.length;
+    setStatus(`200 OK · live FHIR R4 · ${count} ${count === 1 ? "record" : "records"} normalized`, "ok");
+}
+
+// -------------------------------------------------------------------
+// Events
+// -------------------------------------------------------------------
 $ehr.addEventListener("change", () => {
     updateRequestPreview();
-    fetchPatient();
+    fetchActive();
 });
 $pid.addEventListener("change", () => {
     currentPatient = null;
     updateRequestPreview();
-    fetchPatient();
+    fetchActive();
 });
-$btn.addEventListener("click", fetchPatient);
+$btn.addEventListener("click", fetchActive);
+$tabs.forEach((el) => {
+    el.addEventListener("click", () => setTab(el.dataset.tab));
+});
 
-// Initial load
+// -------------------------------------------------------------------
+// Scroll reveal
+// -------------------------------------------------------------------
+function wireScrollReveal() {
+    const targets = document.querySelectorAll("section, .hero, .project-card, .arch-diagram, .demo");
+    targets.forEach((el) => el.classList.add("fade-in"));
+    if (!("IntersectionObserver" in window)) {
+        targets.forEach((el) => el.classList.add("is-visible"));
+        return;
+    }
+    const io = new IntersectionObserver(
+        (entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-visible");
+                    io.unobserve(entry.target);
+                }
+            }
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    targets.forEach((el) => io.observe(el));
+}
+
+// -------------------------------------------------------------------
+// Boot
+// -------------------------------------------------------------------
+wireScrollReveal();
 updateRequestPreview();
 populatePatientDropdown();

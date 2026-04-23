@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
     <header class="site-header">
@@ -116,12 +116,62 @@
 
         <section id="tryout" class="section tryout-wrap">
             <div class="container">
-                <h2>Try it out</h2>
-                <p class="section-lede">Pick an EHR and a patient, hit <em>Fetch patient</em>, and watch the same endpoint return a normalized response — even though the raw vendor payloads look completely different underneath. The <strong>Epic / FHIR R4</strong> side makes a real, live call to the public <a href="https://r4.smarthealthit.org/" target="_blank" rel="noopener">SMART Health IT</a> sandbox (Synthea-generated test patients). ECW has no public sandbox, so its envelope is simulated from the same real patient.</p>
+                <h2>Try it out — Bridge Console</h2>
+                <p class="section-lede">A mini, live version of the bridge pattern. Pick a patient, flip between resources (<em>Patient · Conditions · Medications · Vitals</em>), and every call hits the public <a href="https://r4.smarthealthit.org/" target="_blank" rel="noopener">SMART Health IT FHIR R4</a> sandbox for real. The <strong>Patient</strong> tab also lets you toggle ECW so you can see the legacy envelope collapse into the same normalized shape.</p>
+
+                <div class="arch-diagram" aria-hidden="true">
+                    <svg viewBox="0 0 820 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Bridge architecture diagram">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#5ee2c3"></path>
+                            </marker>
+                        </defs>
+                        <g font-family="Inter, system-ui, sans-serif">
+                            <g>
+                                <rect x="20" y="70" width="150" height="60" rx="10" fill="#171b21" stroke="#232a33"></rect>
+                                <text x="95" y="97" fill="#e6e9ef" font-size="13" font-weight="600" text-anchor="middle">Your app</text>
+                                <text x="95" y="115" fill="#9aa4b2" font-size="11" text-anchor="middle">REST client</text>
+                            </g>
+                            <g>
+                                <rect x="305" y="55" width="210" height="90" rx="12" fill="#1a2330" stroke="#7c9cff"></rect>
+                                <text x="410" y="87" fill="#e6e9ef" font-size="14" font-weight="700" text-anchor="middle">Bridge API</text>
+                                <text x="410" y="108" fill="#7c9cff" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace">/clinical-summary</text>
+                                <text x="410" y="126" fill="#9aa4b2" font-size="11" text-anchor="middle">one contract · many adapters</text>
+                            </g>
+                            <g font-family="JetBrains Mono, monospace" font-size="11">
+                                <rect x="650" y="15"  width="150" height="30" rx="6" fill="#171b21" stroke="#232a33"></rect>
+                                <text x="725" y="35" fill="#d6deeb" text-anchor="middle">eClinicalWorks</text>
+                                <rect x="650" y="55"  width="150" height="30" rx="6" fill="#171b21" stroke="#232a33"></rect>
+                                <text x="725" y="75" fill="#d6deeb" text-anchor="middle">Epic / OpenEpic</text>
+                                <rect x="650" y="95"  width="150" height="30" rx="6" fill="#171b21" stroke="#232a33"></rect>
+                                <text x="725" y="115" fill="#d6deeb" text-anchor="middle">Athena</text>
+                                <rect x="650" y="135" width="150" height="30" rx="6" fill="#171b21" stroke="#232a33"></rect>
+                                <text x="725" y="155" fill="#d6deeb" text-anchor="middle">NextGen</text>
+                                <rect x="650" y="175" width="150" height="30" rx="6" fill="#171b21" stroke="#232a33"></rect>
+                                <text x="725" y="195" fill="#d6deeb" text-anchor="middle">Healthie · Elation</text>
+                            </g>
+                            <g stroke="#5ee2c3" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+                                <line x1="170" y1="100" x2="300" y2="100"></line>
+                                <line x1="515" y1="90"  x2="645" y2="30"></line>
+                                <line x1="515" y1="95"  x2="645" y2="70"></line>
+                                <line x1="515" y1="100" x2="645" y2="110"></line>
+                                <line x1="515" y1="105" x2="645" y2="150"></line>
+                                <line x1="515" y1="110" x2="645" y2="190"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
 
                 <div class="demo">
+                    <div class="demo-tabs" role="tablist">
+                        <button class="demo-tab is-active" role="tab" data-tab="patient" aria-selected="true">Patient</button>
+                        <button class="demo-tab" role="tab" data-tab="conditions" aria-selected="false">Conditions</button>
+                        <button class="demo-tab" role="tab" data-tab="medications" aria-selected="false">Medications</button>
+                        <button class="demo-tab" role="tab" data-tab="vitals" aria-selected="false">Vitals</button>
+                    </div>
+
                     <div class="demo-controls">
-                        <label>
+                        <label id="ehr-control">
                             <span>EHR system</span>
                             <select id="ehr-select">
                                 <option value="epic">Epic / FHIR R4 · live</option>
@@ -134,19 +184,19 @@
                                 <option value="">Loading patients…</option>
                             </select>
                         </label>
-                        <button id="fetch-btn" class="btn btn-primary" disabled>Fetch patient</button>
+                        <button id="fetch-btn" class="btn btn-primary" disabled>Fetch</button>
                     </div>
 
                     <div class="demo-request">
                         <span class="demo-label">Request</span>
-                        <pre><code id="request-preview">GET /api/v1/clinical-summary/patient?ehr=ecw&amp;patient_id=P-10042</code></pre>
+                        <pre><code id="request-preview">—</code></pre>
                     </div>
 
                     <div class="demo-panels">
                         <div class="demo-panel">
                             <div class="demo-panel-head">
                                 <span class="demo-label">Raw vendor response</span>
-                                <span class="demo-hint" id="raw-hint">ECW shape</span>
+                                <span class="demo-hint" id="raw-hint">—</span>
                             </div>
                             <pre><code id="raw-response">—</code></pre>
                         </div>
@@ -183,6 +233,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>
