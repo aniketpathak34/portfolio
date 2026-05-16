@@ -726,6 +726,29 @@ nav a:hover { color: var(--text); text-decoration: none; }
     flex-wrap: wrap;
     gap: 0.5rem;
 }
+.footer-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+.footer-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--muted);
+    background: var(--bg-soft);
+    transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.footer-icon:hover {
+    color: var(--accent-2);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
 
 /* JSON syntax tint */
 .j-key { color: #c5a3ff; }
