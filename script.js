@@ -559,7 +559,6 @@ function wireCmdK() {
         { group: "Bridge Console", icon: "▸", title: "Switch to Vitals tab", hint: "tab", run: () => { setTab("vitals"); jumpTo("#tryout"); } },
 
         { group: "Open", icon: "↗", title: "LinkedIn · aniket-pathak12", hint: "linkedin.com", run: () => window.open("https://linkedin.com/in/aniket-pathak12", "_blank") },
-        { group: "Open", icon: "↗", title: "GitHub · aniketpathak34", hint: "github.com", run: () => window.open("https://github.com/aniketpathak34", "_blank") },
     ];
 
     let activeIdx = 0;
