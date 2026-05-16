@@ -534,7 +534,6 @@ function wireCmdK() {
     const MAILTO = "mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project";
     const actions = [
         { group: "Actions", icon: "→", title: "Start a project", hint: "email me", run: () => { location.href = MAILTO; } },
-        { group: "Actions", icon: "↓", title: "Download CV", hint: "aniket-pathak-resume.pdf", run: () => { window.open("aniket-pathak-resume.pdf", "_blank"); } },
         { group: "Actions", icon: "✉", title: "Copy email address", hint: "aniketpathak34@gmail.com", run: async () => {
             try {
                 await navigator.clipboard.writeText("aniketpathak34@gmail.com");
