@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=9">
+    <link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
     <header class="site-header">
@@ -56,7 +56,7 @@
 
     <main id="top">
         <section class="hero container">
-            <p class="availability"><span class="availability-dot"></span> Available for new projects — from May 2026</p>
+            <p class="availability"><span class="availability-dot"></span> Available for new projects — from 2026</p>
             <p class="eyebrow">EHR Integration Engineer</p>
             <h1>I connect digital health products to the <span class="accent">20+ US EHRs</span> they need to talk to.</h1>
             <p class="lede">FHIR R4, HL7 v2, bi-directional sync and write-back — the integration plumbing that lets ambient scribes, RPM, AI medical coding and care platforms actually exchange data with Epic, Athena, eClinicalWorks, NextGen, Healthie, Elation and the rest.</p>
@@ -202,18 +202,44 @@
 
         <section id="coverage" class="container section">
             <h2>Integration coverage</h2>
-            <p class="section-lede">The EHRs I've built adapters against, and which operations each one speaks. New EHR not on the list? The adapter pattern means adding one more is routine work, not a rebuild.</p>
+            <p class="section-lede">EHR integration isn't one skill — it's 26 different vendors, each with its own API, auth, quirks and sandbox process. These are the systems I've built against.</p>
+
+            <div class="coverage-stat">
+                <span class="coverage-num">26</span>
+                <span class="coverage-num-label">EHR systems integrated<br>— and adding more</span>
+            </div>
 
             <div class="ehr-grid">
-                <div class="ehr-tile"><span class="ehr-name">eClinicalWorks</span><span class="ehr-kind">FHIR + legacy</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Epic / OpenEpic</span><span class="ehr-kind">FHIR R4</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Athena</span><span class="ehr-kind">FHIR R4 / DSTU2</span></div>
-                <div class="ehr-tile"><span class="ehr-name">NextGen</span><span class="ehr-kind">FHIR</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Nextech</span><span class="ehr-kind">PM &amp; ICP</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Healthie</span><span class="ehr-kind">REST + GraphQL</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Elation</span><span class="ehr-kind">REST</span></div>
-                <div class="ehr-tile"><span class="ehr-name">OncoEMR</span><span class="ehr-kind">Flatiron</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Athena</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Epic</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Cerner</span></div>
+                <div class="ehr-tile"><span class="ehr-name">NextGen</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Allscripts</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Elation</span></div>
+                <div class="ehr-tile"><span class="ehr-name">OpenEMR</span></div>
+                <div class="ehr-tile"><span class="ehr-name">eClinicalWorks</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Nextech</span></div>
+                <div class="ehr-tile"><span class="ehr-name">DrChrono</span></div>
+                <div class="ehr-tile"><span class="ehr-name">ModMed</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Meditech</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Office Practicum</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Praxis EHR</span></div>
+                <div class="ehr-tile"><span class="ehr-name">MedHost</span></div>
+                <div class="ehr-tile"><span class="ehr-name">McKesson</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Greenway Health</span></div>
+                <div class="ehr-tile"><span class="ehr-name">CareCloud</span></div>
+                <div class="ehr-tile"><span class="ehr-name">EyeMD</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Amazing Charts</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Cerbo</span></div>
+                <div class="ehr-tile"><span class="ehr-name">CharmHealth</span></div>
+                <div class="ehr-tile"><span class="ehr-name">MDLogic</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Canvas Medical</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Open Dental</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Alligence</span></div>
             </div>
+
+            <h3 class="coverage-subhead">Operation-level detail</h3>
+            <p class="coverage-sub">A closer look at the operations across the systems I work with most often — Patient, Conditions, Medications, Vitals, Documents, Scheduling, Bulk data and Webhooks.</p>
 
             <div class="matrix-wrap">
                 <div class="matrix-legend">
@@ -293,15 +319,15 @@
                                 <td><i class="m-dot m-no"></i></td>
                             </tr>
                             <tr>
-                                <th scope="row">Healthie</th>
+                                <th scope="row">Cerner</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
                                 <td><i class="m-dot m-yes"></i></td>
                                 <td><i class="m-dot m-yes"></i></td>
                                 <td><i class="m-dot m-yes"></i></td>
                                 <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
                                 <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
                             </tr>
                             <tr>
                                 <th scope="row">Elation</th>
@@ -315,13 +341,13 @@
                                 <td><i class="m-dot m-yes"></i></td>
                             </tr>
                             <tr>
-                                <th scope="row">OncoEMR</th>
+                                <th scope="row">Allscripts</th>
+                                <td><i class="m-dot m-yes"></i></td>
+                                <td><i class="m-dot m-yes"></i></td>
                                 <td><i class="m-dot m-yes"></i></td>
                                 <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
                                 <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
+                                <td><i class="m-dot m-partial"></i></td>
                                 <td><i class="m-dot m-no"></i></td>
                                 <td><i class="m-dot m-no"></i></td>
                             </tr>
@@ -488,14 +514,45 @@
             <p>Building an ambient scribe, an RPM tool, an AI coding product or a care platform that needs to talk to an EHR? Tell me what you're connecting and what data needs to move — I'll come back with a scope, milestones and a timeline.</p>
             <div class="cta-row contact-cta">
                 <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Email me →</a>
-                <a class="btn btn-ghost" href="https://linkedin.com/in/aniket-pathak12" target="_blank" rel="noopener">LinkedIn</a>
             </div>
-            <ul class="contact-list">
-                <li><a href="mailto:aniketpathak34@gmail.com">aniketpathak34@gmail.com</a></li>
-                <li><a href="tel:+917030344210">+91 70303 44210</a></li>
-                <li><a href="https://linkedin.com/in/aniket-pathak12" target="_blank" rel="noopener">linkedin.com/in/aniket-pathak12</a></li>
-                <li><a href="https://github.com/aniketpathak34" target="_blank" rel="noopener">github.com/aniketpathak34</a></li>
-            </ul>
+            <div class="contact-grid">
+                <a class="contact-card" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project" aria-label="Email Aniket">
+                    <span class="contact-card-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 5L2 7"></path></svg>
+                    </span>
+                    <span class="contact-card-body">
+                        <span class="contact-card-label">Email</span>
+                        <span class="contact-card-value">aniketpathak34@gmail.com</span>
+                    </span>
+                </a>
+                <a class="contact-card" href="tel:+917030344210" aria-label="Call Aniket">
+                    <span class="contact-card-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </span>
+                    <span class="contact-card-body">
+                        <span class="contact-card-label">Phone</span>
+                        <span class="contact-card-value">+91 70303 44210</span>
+                    </span>
+                </a>
+                <a class="contact-card" href="https://linkedin.com/in/aniket-pathak12" target="_blank" rel="noopener" aria-label="LinkedIn profile">
+                    <span class="contact-card-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 9.5H5.67V18h2.67V9.5zM7 6.06a1.55 1.55 0 1 0 0 3.1 1.55 1.55 0 0 0 0-3.1zM18.34 18v-4.66c0-2.49-1.33-3.65-3.1-3.65-1.43 0-2.07.79-2.43 1.34V9.5h-2.67V18h2.67v-4.5c0-1.17.83-1.72 1.6-1.72.74 0 1.26.52 1.26 1.72V18h2.67z"></path></svg>
+                    </span>
+                    <span class="contact-card-body">
+                        <span class="contact-card-label">LinkedIn</span>
+                        <span class="contact-card-value">in/aniket-pathak12</span>
+                    </span>
+                </a>
+                <a class="contact-card" href="https://github.com/aniketpathak34" target="_blank" rel="noopener" aria-label="GitHub profile">
+                    <span class="contact-card-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49l-.01-1.9c-2.78.62-3.37-1.22-3.37-1.22-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.71.12 2.51.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.95.68 1.92l-.01 2.85c0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"></path></svg>
+                    </span>
+                    <span class="contact-card-body">
+                        <span class="contact-card-label">GitHub</span>
+                        <span class="contact-card-value">aniketpathak34</span>
+                    </span>
+                </a>
+            </div>
         </section>
     </main>
 
