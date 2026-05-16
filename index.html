@@ -120,21 +120,21 @@
 
             <article class="casestudy">
                 <header class="casestudy-head">
-                    <h3>Ziva Health — one platform, 20+ EHRs</h3>
-                    <p class="casestudy-tags"><span>Multi-tenant</span><span>FHIR &amp; REST</span><span>GraphQL</span><span>Webhooks</span></p>
+                    <h3>Ziva Health — clinical data for a health-monitoring platform</h3>
+                    <p class="casestudy-tags"><span>Multi-tenant</span><span>RPM / vitals</span><span>FHIR &amp; REST</span><span>GraphQL</span><span>Webhooks</span></p>
                 </header>
                 <div class="casestudy-grid">
                     <div class="casestudy-block">
                         <span class="casestudy-label">The problem</span>
-                        <p>Ziva Health's care platform had to exchange patient records, SOAP notes, clinical documents and appointments with the EHRs its partner clinics already used — and every clinic used a different one. Building each connection as bespoke code meant every new EHR was a fresh project, and every vendor quirk was a new bug surface.</p>
+                        <p>Ziva Health runs a multi-organization health-monitoring platform — for clinics, employer wellness programs and membership plans — where providers track patients' real-time vitals: heart rate, blood pressure, sleep, blood oxygen, glucose. To give providers the full picture, Ziva also needed each patient's existing clinical record from whatever EHR their clinic already ran — and every clinic ran a different one.</p>
                     </div>
                     <div class="casestudy-block">
                         <span class="casestudy-label">What I did</span>
-                        <p>I architected a multi-tenant integration microservice in Django that puts every EHR behind a single request/response contract. Per-clinic templates map heterogeneous EHR schemas through configuration, and webhook-driven exchange keeps data current in real time. The platform integrates once; each EHR is just an adapter.</p>
+                        <p>I built a multi-tenant integration service in Django that puts every EHR behind a single request/response contract. Per-clinic configuration templates map each vendor's schema without new code, and webhook-driven sync keeps records current. Ziva integrates once; each EHR — Healthie, Elation and the rest — is just an adapter behind the same contract.</p>
                     </div>
                     <div class="casestudy-block">
                         <span class="casestudy-label">The result</span>
-                        <p>Onboarding a new EHR became a <strong>configuration change, not a code change</strong>. One contract across 20+ adapters meant integration bugs dropped and onboarding time fell sharply. Healthie, Elation and the rest now look like one clean API to everything upstream.</p>
+                        <p>Onboarding a clinic on a new EHR became a <strong>configuration change, not a code change</strong>. One contract across the adapters meant fewer integration bugs and sharply faster onboarding — and providers now see EHR clinical history right alongside live device vitals.</p>
                     </div>
                 </div>
             </article>
