@@ -482,14 +482,14 @@ function runTerminal() {
 
     const lines = [
         { delay: 300, html: '<span class="prompt">$</span> <span class="cmd">whoami</span>\n' },
-        { delay: 220, html: '<span class="out">Aniket Pathak — Backend Engineer (Pune, IN)</span>\n\n' },
+        { delay: 220, html: '<span class="out">Aniket Pathak — EHR Integration Engineer (Pune, IN)</span>\n\n' },
         { delay: 250, html: '<span class="prompt">$</span> <span class="cmd">cat stack.md</span>\n' },
-        { delay: 180, html: '<span class="key">core</span>     <span class="out">Python · Django · FastAPI · Celery · PostgreSQL</span>\n' },
-        { delay: 180, html: '<span class="key">ai</span>       <span class="out">LangGraph · LangChain · LLM APIs · Agentic AI</span>\n' },
-        { delay: 180, html: '<span class="key">cloud</span>    <span class="out">Docker · GitHub Actions · AWS (EC2, S3)</span>\n' },
-        { delay: 180, html: '<span class="key">domain</span>   <span class="out">FHIR · HIPAA · Multi-tenant SaaS · Webhooks</span>\n\n' },
+        { delay: 170, html: '<span class="key">integrate</span>  <span class="out">FHIR R4/DSTU2 · HL7 v2 · REST · GraphQL · write-back</span>\n' },
+        { delay: 170, html: '<span class="key">build</span>      <span class="out">Python · Django · FastAPI · Celery · PostgreSQL</span>\n' },
+        { delay: 170, html: '<span class="key">ai</span>         <span class="out">LangGraph · LangChain · LLM APIs · Agentic AI</span>\n' },
+        { delay: 170, html: '<span class="key">ship</span>       <span class="out">Docker · GitHub Actions · AWS · HIPAA · webhooks</span>\n\n' },
         { delay: 260, html: '<span class="prompt">$</span> <span class="cmd">echo $STATUS</span>\n' },
-        { delay: 220, html: '<span class="str">"shipping quietly · open to freelance · coffee welcome"</span>\n' },
+        { delay: 220, html: '<span class="str">"available for new projects · US-hours overlap · BAA on request"</span>\n' },
     ];
 
     let i = 0;
@@ -531,11 +531,26 @@ function wireCmdK() {
     const trigger = document.getElementById("cmdk-open");
     if (!root || !input || !list) return;
 
+    const MAILTO = "mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project";
     const actions = [
-        { group: "Go to", icon: "§", title: "About", hint: "#about", run: () => jumpTo("#about") },
-        { group: "Go to", icon: "§", title: "Selected work", hint: "#projects", run: () => jumpTo("#projects") },
+        { group: "Actions", icon: "→", title: "Start a project", hint: "email me", run: () => { location.href = MAILTO; } },
+        { group: "Actions", icon: "↓", title: "Download CV", hint: "aniket-pathak-resume.pdf", run: () => { window.open("aniket-pathak-resume.pdf", "_blank"); } },
+        { group: "Actions", icon: "✉", title: "Copy email address", hint: "aniketpathak34@gmail.com", run: async () => {
+            try {
+                await navigator.clipboard.writeText("aniketpathak34@gmail.com");
+                toast("Email copied to clipboard");
+            } catch {
+                location.href = MAILTO;
+            }
+        } },
+
+        { group: "Go to", icon: "§", title: "Work with me — services", hint: "#services", run: () => jumpTo("#services") },
+        { group: "Go to", icon: "§", title: "Case study — Ziva Health", hint: "#casestudy", run: () => jumpTo("#casestudy") },
+        { group: "Go to", icon: "§", title: "More selected work", hint: "#work", run: () => jumpTo("#work") },
         { group: "Go to", icon: "§", title: "Integration coverage", hint: "#coverage", run: () => jumpTo("#coverage") },
-        { group: "Go to", icon: "§", title: "Try it out (Bridge Console)", hint: "#tryout", run: () => jumpTo("#tryout") },
+        { group: "Go to", icon: "§", title: "Bridge Console (live demo)", hint: "#tryout", run: () => jumpTo("#tryout") },
+        { group: "Go to", icon: "§", title: "FAQ", hint: "#faq", run: () => jumpTo("#faq") },
+        { group: "Go to", icon: "§", title: "About", hint: "#about", run: () => jumpTo("#about") },
         { group: "Go to", icon: "§", title: "Contact", hint: "#contact", run: () => jumpTo("#contact") },
 
         { group: "Bridge Console", icon: "▸", title: "Switch to Patient tab", hint: "tab", run: () => { setTab("patient"); jumpTo("#tryout"); } },
@@ -543,18 +558,8 @@ function wireCmdK() {
         { group: "Bridge Console", icon: "▸", title: "Switch to Medications tab", hint: "tab", run: () => { setTab("medications"); jumpTo("#tryout"); } },
         { group: "Bridge Console", icon: "▸", title: "Switch to Vitals tab", hint: "tab", run: () => { setTab("vitals"); jumpTo("#tryout"); } },
 
-        { group: "Actions", icon: "↓", title: "Download CV", hint: "aniket-pathak-resume.pdf", run: () => { window.open("aniket-pathak-resume.pdf", "_blank"); } },
-        { group: "Actions", icon: "✉", title: "Copy email", hint: "aniketpathak34@gmail.com", run: async () => {
-            try {
-                await navigator.clipboard.writeText("aniketpathak34@gmail.com");
-                toast("Email copied");
-            } catch {
-                location.href = "mailto:aniketpathak34@gmail.com";
-            }
-        } },
-        { group: "Actions", icon: "✉", title: "Email me", hint: "mailto:", run: () => { location.href = "mailto:aniketpathak34@gmail.com"; } },
-        { group: "Open", icon: "↗", title: "GitHub · aniketpathak34", hint: "github.com", run: () => window.open("https://github.com/aniketpathak34", "_blank") },
         { group: "Open", icon: "↗", title: "LinkedIn · aniket-pathak12", hint: "linkedin.com", run: () => window.open("https://linkedin.com/in/aniket-pathak12", "_blank") },
+        { group: "Open", icon: "↗", title: "GitHub · aniketpathak34", hint: "github.com", run: () => window.open("https://github.com/aniketpathak34", "_blank") },
     ];
 
     let activeIdx = 0;

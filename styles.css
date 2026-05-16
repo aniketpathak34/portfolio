@@ -200,6 +200,196 @@ nav a:hover { color: var(--text); text-decoration: none; }
     font-family: var(--mono);
 }
 
+/* ───── Availability badge + hero meta ───── */
+.availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.82rem;
+    color: var(--accent-2);
+    font-family: var(--mono);
+    background: rgba(94, 226, 195, 0.07);
+    border: 1px solid rgba(94, 226, 195, 0.28);
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    margin: 0 0 1.35rem;
+}
+.availability-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    animation: avail-pulse 2.2s infinite;
+}
+@keyframes avail-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(94, 226, 195, 0.55); }
+    70%  { box-shadow: 0 0 0 9px rgba(94, 226, 195, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(94, 226, 195, 0); }
+}
+.hero-meta {
+    margin-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.83rem;
+    font-family: var(--mono);
+}
+
+/* ───── Services / Work with me ───── */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.service-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.35rem;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.service-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.service-card h3 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+.service-card p { color: var(--muted); margin: 0; font-size: 0.92rem; }
+
+.howiwork {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(124, 156, 255, 0.09), rgba(94, 226, 195, 0.05));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+.howiwork-text { flex: 1 1 340px; }
+.howiwork-text h3 { margin-bottom: 0.4rem; }
+.howiwork-text p { color: var(--muted); margin: 0; }
+.howiwork-cta { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ───── Case study ───── */
+.casestudy {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+}
+.casestudy-head h3 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+.casestudy-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1.4rem; }
+.casestudy-tags span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    background: var(--bg-soft);
+}
+.casestudy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+.casestudy-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+}
+.casestudy-block:nth-child(1) .casestudy-label { color: #ff8f7a; }
+.casestudy-block:nth-child(2) .casestudy-label { color: var(--accent); }
+.casestudy-block:nth-child(3) .casestudy-label { color: var(--accent-2); }
+.casestudy-block p { color: var(--muted); margin: 0; font-size: 0.93rem; }
+.casestudy-block strong { color: var(--text); }
+
+/* ───── Project result line ───── */
+.project-result {
+    color: var(--accent-2) !important;
+    font-size: 0.87rem !important;
+    border-top: 1px solid var(--border);
+    padding-top: 0.8rem;
+}
+
+/* ───── EHR tile grid ───── */
+.ehr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 1.5rem;
+}
+.ehr-tile {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    transition: border-color 0.2s ease, transform 0.15s ease;
+}
+.ehr-tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+.ehr-name { font-weight: 600; font-size: 0.94rem; }
+.ehr-kind { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+/* ───── FAQ ───── */
+.faq { display: flex; flex-direction: column; gap: 0.6rem; }
+.faq details {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+.faq summary {
+    padding: 1rem 1.15rem;
+    cursor: pointer;
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: color 0.15s ease;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+    content: "+";
+    color: var(--accent);
+    font-size: 1.35rem;
+    line-height: 1;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq summary:hover { color: var(--accent); }
+.faq details p {
+    margin: 0;
+    padding: 0 1.15rem 1.15rem;
+    color: var(--muted);
+    font-size: 0.93rem;
+}
+.faq details p strong { color: var(--text); }
+
+/* ───── Testimonial quote ───── */
+.quote {
+    margin: 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.75rem;
+}
+.quote blockquote {
+    margin: 0 0 0.75rem;
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.5;
+}
+.quote figcaption { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; }
+
+.contact-cta { margin: 1.25rem 0 1.75rem; }
+
 /* Try Out */
 .tryout-wrap {
     background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
@@ -771,14 +961,27 @@ nav a:hover { color: var(--text); text-decoration: none; }
 @media (max-width: 960px) {
     .demo-panels { grid-template-columns: 1fr; }
 }
+@media (max-width: 900px) {
+    .casestudy-grid { grid-template-columns: 1fr; }
+}
 @media (max-width: 760px) {
     .about-grid { grid-template-columns: 1fr; }
     .demo-controls #fetch-btn { width: 100%; }
-    nav a { margin-left: 1rem; font-size: 0.9rem; }
+    nav a { margin-left: 0.85rem; font-size: 0.88rem; }
     .hero { padding: 3rem 1.25rem 2.5rem; }
     .section { padding: 2.5rem 1.25rem; }
     .demo-tabs { overflow-x: auto; flex-wrap: nowrap; }
     .demo-tab { white-space: nowrap; }
     .cmdk-trigger span { display: none; }
     .cmdk-trigger { padding: 0.35rem 0.55rem; margin-left: 0.75rem; }
+    .casestudy { padding: 1.35rem; }
+    .howiwork { padding: 1.25rem; }
+    .nav-wrap { flex-wrap: wrap; gap: 0.5rem 0; }
+    nav { display: flex; flex-wrap: wrap; align-items: center; }
+    nav a:first-child { margin-left: 0; }
+}
+@media (max-width: 460px) {
+    h1 { font-size: 1.85rem; }
+    .btn { width: 100%; }
+    .cta-row { flex-direction: column; }
 }

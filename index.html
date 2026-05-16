@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aniket Pathak — Backend Engineer</title>
-    <meta name="description" content="Backend engineer in Pune — Django, FastAPI, LangGraph/LangChain, and 20+ EHR integrations for US healthcare clients.">
+    <title>Aniket Pathak — EHR Integration Engineer</title>
+    <meta name="description" content="Independent EHR integration engineer. I connect digital health products to 20+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back. Available for new projects.">
     <meta name="author" content="Aniket Pathak">
     <meta name="theme-color" content="#0b0d10">
     <link rel="canonical" href="https://aniketpathak34.github.io/portfolio/">
@@ -16,8 +16,8 @@
 
     <!-- OpenGraph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Aniket Pathak — Backend Engineer">
-    <meta property="og:description" content="Production backends for healthcare, at scale. Django, FastAPI, LangGraph/LangChain, and 20+ EHR integrations.">
+    <meta property="og:title" content="Aniket Pathak — EHR Integration Engineer">
+    <meta property="og:description" content="I connect digital health products to 20+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back. Available for new projects.">
     <meta property="og:url" content="https://aniketpathak34.github.io/portfolio/">
     <meta property="og:image" content="https://aniketpathak34.github.io/portfolio/og-image.png">
     <meta property="og:image:width" content="1200">
@@ -26,24 +26,25 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Aniket Pathak — Backend Engineer">
-    <meta name="twitter:description" content="Production backends for healthcare, at scale. Django, FastAPI, LangGraph/LangChain, and 20+ EHR integrations.">
+    <meta name="twitter:title" content="Aniket Pathak — EHR Integration Engineer">
+    <meta name="twitter:description" content="I connect digital health products to 20+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back.">
     <meta name="twitter:image" content="https://aniketpathak34.github.io/portfolio/og-image.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=8">
+    <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
     <header class="site-header">
         <div class="container nav-wrap">
             <a class="brand" href="#top">AP<span class="brand-dot">.</span></a>
             <nav>
-                <a href="#about">About</a>
-                <a href="#projects">Projects</a>
+                <a href="#services">Services</a>
+                <a href="#casestudy">Work</a>
                 <a href="#coverage">Coverage</a>
-                <a href="#tryout">Try&nbsp;Out</a>
+                <a href="#tryout">Demo</a>
+                <a href="#faq">FAQ</a>
                 <a href="#contact">Contact</a>
                 <button type="button" id="cmdk-open" class="cmdk-trigger" aria-label="Open command palette">
                     <span>Search</span>
@@ -55,93 +56,145 @@
 
     <main id="top">
         <section class="hero container">
-            <p class="eyebrow">Backend Engineer · Pune, India</p>
-            <h1>Production backends for <span class="accent">healthcare</span>, at scale.</h1>
-            <p class="lede">I build multi-tenant microservices that talk to 20+ EHRs, ship HIPAA-compliant AI workflows with LangGraph + LangChain, and keep clean REST contracts between very messy systems.</p>
+            <p class="availability"><span class="availability-dot"></span> Available for new projects — from May 2026</p>
+            <p class="eyebrow">EHR Integration Engineer</p>
+            <h1>I connect digital health products to the <span class="accent">20+ US EHRs</span> they need to talk to.</h1>
+            <p class="lede">FHIR R4, HL7 v2, bi-directional sync and write-back — the integration plumbing that lets ambient scribes, RPM, AI medical coding and care platforms actually exchange data with Epic, Athena, eClinicalWorks, NextGen, Healthie, Elation and the rest.</p>
             <div class="cta-row">
-                <a class="btn btn-primary" href="#tryout">See a live demo</a>
-                <a class="btn btn-ghost" href="#projects">View work</a>
+                <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Start a project →</a>
+                <a class="btn btn-ghost" href="#tryout">See a live demo</a>
                 <a class="btn btn-ghost btn-download" href="aniket-pathak-resume.pdf" download="Aniket-Pathak-Resume.pdf" aria-label="Download resume PDF">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     Download CV
                 </a>
             </div>
+            <p class="hero-meta">Pune, India · Works US business hours · HIPAA-aware · BAA on request</p>
         </section>
 
-        <section id="about" class="container section">
-            <h2>About</h2>
-            <div class="about-grid">
-                <div>
-                    <p>I'm <strong>Aniket Pathak</strong>, a Backend Engineer based in Pune, India, focused on healthcare integrations. I own production microservices end-to-end — Django, FastAPI, Celery, AWS — and spend most of my time making 20+ EHR integrations look like one clean API.</p>
-                    <p>Outside my day job I'm selectively open to <strong>freelance &amp; consulting</strong> work in the same space — backend, EHR integration, and healthcare AI engagements.</p>
-                    <p>Lately I've been building HIPAA-compliant AI microservices on top of <strong>LangGraph</strong> and <strong>LangChain</strong>: stateful multi-turn clinical conversations that stay grounded in a patient's real history. I care about clean contracts, boring reliability, and shipping.</p>
+        <section id="services" class="container section">
+            <h2>Work with me</h2>
+            <p class="section-lede">I take on independent EHR integration projects for digital health teams — ambient scribes, remote patient monitoring, AI medical coding, and care-coordination platforms. If your product needs to read from or write back to an EHR, that's the work I do.</p>
+
+            <div class="services-grid">
+                <article class="service-card">
+                    <h3>FHIR &amp; HL7 v2 pipelines</h3>
+                    <p>Read and write clinical data over FHIR R4, FHIR DSTU2, and HL7 v2 — patients, conditions, medications, vitals, documents, scheduling.</p>
+                </article>
+                <article class="service-card">
+                    <h3>Bi-directional EHR sync</h3>
+                    <p>Keep your platform and the EHR in step — webhook-driven, real-time where the vendor allows, reconciled and idempotent where it doesn't.</p>
+                </article>
+                <article class="service-card">
+                    <h3>Write-back</h3>
+                    <p>Push notes, orders, documents and results back into the EHR — the hard half of integration most vendors quietly avoid.</p>
+                </article>
+                <article class="service-card">
+                    <h3>Sandbox &amp; vendor onboarding</h3>
+                    <p>I handle the slow part — developer-program registration, sandbox approval, app credentials, and the certification paperwork.</p>
+                </article>
+                <article class="service-card">
+                    <h3>RPA where APIs fall short</h3>
+                    <p>When an EHR has no real API, I bridge the gap with robust automation — one such pipeline cut manual processing effort by 40%.</p>
+                </article>
+                <article class="service-card">
+                    <h3>One clean contract</h3>
+                    <p>Your team integrates once, against a normalized schema. New EHRs become an adapter behind the same contract, not a rewrite.</p>
+                </article>
+            </div>
+
+            <div class="howiwork">
+                <div class="howiwork-text">
+                    <h3>How I work</h3>
+                    <p>Engagements are <strong>milestone-based and fixed-scope</strong>. We agree the deliverables up front, and you pay on working software at each milestone — not by the hour, not by the calendar. It keeps the risk on me and the result in your hands.</p>
                 </div>
-                <div class="terminal" id="terminal">
-                    <div class="terminal-head">
-                        <span class="terminal-dot terminal-dot-red"></span>
-                        <span class="terminal-dot terminal-dot-amber"></span>
-                        <span class="terminal-dot terminal-dot-green"></span>
-                        <span class="terminal-title">aniket@portfolio ~ </span>
-                    </div>
-                    <pre class="terminal-body"><code id="terminal-output"></code><span class="terminal-cursor" id="terminal-cursor">▋</span></pre>
+                <div class="howiwork-cta">
+                    <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Email me</a>
+                    <a class="btn btn-ghost" href="https://linkedin.com/in/aniket-pathak12" target="_blank" rel="noopener">LinkedIn</a>
                 </div>
             </div>
         </section>
 
-        <section id="projects" class="container section">
-            <h2>Selected work</h2>
+        <section id="casestudy" class="container section">
+            <h2>Case study</h2>
+            <p class="section-lede">One project, told properly — the problem, the work, and what changed.</p>
+
+            <article class="casestudy">
+                <header class="casestudy-head">
+                    <h3>Ziva Health — one platform, 20+ EHRs</h3>
+                    <p class="casestudy-tags"><span>Multi-tenant</span><span>FHIR &amp; REST</span><span>GraphQL</span><span>Webhooks</span></p>
+                </header>
+                <div class="casestudy-grid">
+                    <div class="casestudy-block">
+                        <span class="casestudy-label">The problem</span>
+                        <p>Ziva Health's care platform had to exchange patient records, SOAP notes, clinical documents and appointments with the EHRs its partner clinics already used — and every clinic used a different one. Building each connection as bespoke code meant every new EHR was a fresh project, and every vendor quirk was a new bug surface.</p>
+                    </div>
+                    <div class="casestudy-block">
+                        <span class="casestudy-label">What I did</span>
+                        <p>I architected a multi-tenant integration microservice in Django that puts every EHR behind a single request/response contract. Per-clinic templates map heterogeneous EHR schemas through configuration, and webhook-driven exchange keeps data current in real time. The platform integrates once; each EHR is just an adapter.</p>
+                    </div>
+                    <div class="casestudy-block">
+                        <span class="casestudy-label">The result</span>
+                        <p>Onboarding a new EHR became a <strong>configuration change, not a code change</strong>. One contract across 20+ adapters meant integration bugs dropped and onboarding time fell sharply. Healthie, Elation and the rest now look like one clean API to everything upstream.</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!--
+        ════════════════════════════════════════════════════════════════
+        TESTIMONIAL — ready to go, intentionally hidden until it's real.
+        Ask a past client or colleague for ONE honest line, then delete
+        this comment wrapper to publish it. Do NOT ship a made-up quote.
+        ════════════════════════════════════════════════════════════════
+        <section id="testimonial" class="container section">
+            <h2>What people say</h2>
+            <figure class="quote">
+                <blockquote>"REPLACE WITH A REAL ONE-LINE QUOTE — e.g. shipped our Athena integration in 5 weeks, clean and stable."</blockquote>
+                <figcaption>— Full Name, Role, Company</figcaption>
+            </figure>
+        </section>
+        -->
+
+        <section id="work" class="container section">
+            <h2>More selected work</h2>
             <div class="projects">
                 <article class="project-card">
-                    <h3>Ziva Health — EHR Integration Bridge</h3>
-                    <p class="project-role">Backend owner · end-to-end</p>
-                    <p>Multi-tenant Django microservice that bridges Ziva Health with 20+ EHRs (Healthie, Elation, and others). Syncs patient records, SOAP notes, clinical documents, and appointments over REST &amp; GraphQL, with webhook-driven real-time exchange. Configurable per-clinic templates let new EHRs onboard via config rather than code — and a single request/response contract across all adapters keeps integration bugs rare.</p>
+                    <h3>Isabella AI — HIPAA-compliant healthcare AI</h3>
+                    <p class="project-role">EHR + AI integration</p>
+                    <p>FastAPI microservice for natural-language conversations between patients and providers, built on <strong>LangGraph + LangChain</strong>. Stateful conversation graphs keep clinical context across sessions; structured EHR history grounds every LLM response.</p>
+                    <p class="project-result">Result — provider-specific answers stay grounded in real patient records, with PHI isolation and audit logging built in from day one.</p>
                     <ul class="tags">
-                        <li>Django</li><li>REST</li><li>GraphQL</li><li>Webhooks</li><li>Multi-tenant</li>
+                        <li>FastAPI</li><li>LangGraph</li><li>LangChain</li><li>HIPAA</li>
                     </ul>
                 </article>
 
                 <article class="project-card">
-                    <h3>Isabella AI — HIPAA-Compliant Healthcare AI</h3>
-                    <p class="project-role">Backend engineer</p>
-                    <p>FastAPI microservice powering natural-language conversations between patients and providers, built on <strong>LangGraph + LangChain</strong>. Stateful conversation graphs keep clinical context across sessions; structured patient history (past notes, appointments, records) grounds every LLM response. HIPAA-compliant by design — PHI isolation, audit logging, and secure handling baked in.</p>
-                    <ul class="tags">
-                        <li>FastAPI</li><li>LangGraph</li><li>LangChain</li><li>LLM APIs</li><li>HIPAA</li>
-                    </ul>
-                </article>
-
-                <article class="project-card">
-                    <h3>Samacare — Prior-Auth EHR Bridge</h3>
-                    <p class="project-role">Backend engineer</p>
-                    <p>Django + Celery EHR integration bridge for <strong>Samacare's</strong> prior-authorization platform. Standardized patient, document, and clinical-summary contracts across multiple EHR vendors so the prior-auth workflows could operate on a consistent schema, regardless of the source system.</p>
+                    <h3>Samacare — prior-auth EHR bridge</h3>
+                    <p class="project-role">EHR integration</p>
+                    <p>Django + Celery integration bridge for Samacare's prior-authorization platform, standardizing patient, document and clinical-summary contracts across multiple EHR vendors.</p>
+                    <p class="project-result">Result — prior-auth workflows run on one consistent schema instead of vendor-specific code paths, regardless of the source EHR.</p>
                     <ul class="tags">
                         <li>Django</li><li>Celery</li><li>Docker</li><li>EHR Integration</li>
                     </ul>
                 </article>
 
                 <article class="project-card">
-                    <h3>ChronicCareIQ — EHR Integration</h3>
-                    <p class="project-role">Backend engineer</p>
-                    <p>Backend integration module for <strong>ChronicCareIQ (CCIQ)</strong>, a chronic-care-management platform. Connected CCIQ's care workflows to vendor EHRs for patient demographics, clinical summaries, and document sync, reusing the standardized adapter contract.</p>
+                    <h3>ChronicCareIQ — EHR integration</h3>
+                    <p class="project-role">EHR integration</p>
+                    <p>Backend integration module connecting ChronicCareIQ's chronic-care workflows to vendor EHRs for patient demographics, clinical summaries and document sync.</p>
+                    <p class="project-result">Result — the care team reads consistent clinical data through one adapter contract, reusing the same normalized schema across EHRs.</p>
                     <ul class="tags">
                         <li>Django</li><li>REST</li><li>Multi-tenant</li><li>Chronic Care</li>
                     </ul>
                 </article>
 
                 <article class="project-card">
-                    <h3>Sully AI — Healthcare AI Integration</h3>
-                    <p class="project-role">Backend engineer</p>
-                    <p>Contributed backend and EHR-integration work for <strong>Sully AI</strong>, a clinical AI product. Focused on reliable data flow between the AI layer and upstream EHR systems so generated clinical content stayed grounded in real patient context.</p>
+                    <h3>Sully AI — healthcare AI integration</h3>
+                    <p class="project-role">EHR + AI integration</p>
+                    <p>Backend and EHR-integration work for Sully AI, a clinical AI product — keeping data flow between the AI layer and upstream EHR systems reliable.</p>
+                    <p class="project-result">Result — generated clinical content stays grounded in real patient context from the connected EHRs.</p>
                     <ul class="tags">
                         <li>Python</li><li>AI Integration</li><li>REST</li><li>Healthcare</li>
-                    </ul>
-                </article>
-
-                <article class="project-card">
-                    <h3>CCFood — WhatsApp Ordering Backend</h3>
-                    <p class="project-role">Backend engineer</p>
-                    <p>Django backend powering a WhatsApp + SMS food-ordering flow over Twilio, with real-time order processing and 2FA restaurant onboarding APIs.</p>
-                    <ul class="tags">
-                        <li>Django</li><li>Twilio</li><li>WhatsApp</li><li>2FA</li>
                     </ul>
                 </article>
             </div>
@@ -149,7 +202,19 @@
 
         <section id="coverage" class="container section">
             <h2>Integration coverage</h2>
-            <p class="section-lede">A map of which EHRs speak which operations across the adapters I've worked on. Each cell is a contract point — the Bridge makes them look like one API upstream.</p>
+            <p class="section-lede">The EHRs I've built adapters against, and which operations each one speaks. New EHR not on the list? The adapter pattern means adding one more is routine work, not a rebuild.</p>
+
+            <div class="ehr-grid">
+                <div class="ehr-tile"><span class="ehr-name">eClinicalWorks</span><span class="ehr-kind">FHIR + legacy</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Epic / OpenEpic</span><span class="ehr-kind">FHIR R4</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Athena</span><span class="ehr-kind">FHIR R4 / DSTU2</span></div>
+                <div class="ehr-tile"><span class="ehr-name">NextGen</span><span class="ehr-kind">FHIR</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Nextech</span><span class="ehr-kind">PM &amp; ICP</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Healthie</span><span class="ehr-kind">REST + GraphQL</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Elation</span><span class="ehr-kind">REST</span></div>
+                <div class="ehr-tile"><span class="ehr-name">OncoEMR</span><span class="ehr-kind">Flatiron</span></div>
+            </div>
+
             <div class="matrix-wrap">
                 <div class="matrix-legend">
                     <span><i class="m-dot m-yes"></i> Shipped</span>
@@ -268,8 +333,8 @@
 
         <section id="tryout" class="section tryout-wrap">
             <div class="container">
-                <h2>Try it out — Bridge Console</h2>
-                <p class="section-lede">A mini, live version of the bridge pattern. Pick a patient, flip between resources (<em>Patient · Conditions · Medications · Vitals</em>), and every call hits the public <a href="https://r4.smarthealthit.org/" target="_blank" rel="noopener">SMART Health IT FHIR R4</a> sandbox for real. The <strong>Patient</strong> tab also lets you toggle ECW so you can see the legacy envelope collapse into the same normalized shape.</p>
+                <h2>See it work — Bridge Console</h2>
+                <p class="section-lede">A live, miniature version of the integration pattern I build. Pick a patient, flip between resources (<em>Patient · Conditions · Medications · Vitals</em>), and every call hits the public <a href="https://r4.smarthealthit.org/" target="_blank" rel="noopener">SMART Health IT FHIR R4</a> sandbox for real. The <strong>Patient</strong> tab also toggles ECW, so you can watch a legacy vendor envelope collapse into the same normalized shape.</p>
 
                 <div class="arch-diagram" aria-hidden="true">
                     <svg viewBox="0 0 820 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Bridge architecture diagram">
@@ -368,9 +433,63 @@
             </div>
         </section>
 
+        <section id="faq" class="container section">
+            <h2>Questions buyers ask</h2>
+            <p class="section-lede">The things worth knowing before a first call. If yours isn't here, just ask.</p>
+            <div class="faq">
+                <details>
+                    <summary>How long does one EHR integration take?</summary>
+                    <p>A single read-only integration against a documented FHIR or REST sandbox is usually <strong>2–4 weeks</strong>. Bi-directional sync with write-back, or a vendor with a slow sandbox-approval process, runs longer. After a short scoping call I give you a concrete, milestone-by-milestone estimate before any commitment.</p>
+                </details>
+                <details>
+                    <summary>Do you handle HIPAA, and will you sign a BAA?</summary>
+                    <p>Yes. I build with PHI isolation, audit logging, least-privilege access and secure secret handling by default, and I'm happy to sign a Business Associate Agreement before any protected health information is involved.</p>
+                </details>
+                <details>
+                    <summary>How do you price projects?</summary>
+                    <p>Milestone-based and fixed-scope. We agree the deliverables up front and you pay per working milestone — not per hour, not per calendar week. Longer or open-ended engagements can move to a monthly retainer.</p>
+                </details>
+                <details>
+                    <summary>Can you work US business hours?</summary>
+                    <p>Yes. I'm based in Pune (IST) and keep a reliable working overlap with US business hours for standups, calls, reviews and launch windows.</p>
+                </details>
+                <details>
+                    <summary>Which EHRs have you worked with?</summary>
+                    <p>eClinicalWorks, Epic/OpenEpic, Athena, NextGen, Nextech, Healthie, Elation and OncoEMR — with the operation-by-operation detail in the coverage map above. If your EHR isn't listed, the adapter pattern makes onboarding a new one routine.</p>
+                </details>
+                <details>
+                    <summary>Can you join an existing team and codebase?</summary>
+                    <p>Yes — I can own an integration end-to-end as a standalone deliverable, or work inside your repo and conventions alongside your engineers. Whatever keeps the project moving.</p>
+                </details>
+            </div>
+        </section>
+
+        <section id="about" class="container section">
+            <h2>About</h2>
+            <div class="about-grid">
+                <div>
+                    <p>I'm <strong>Aniket Pathak</strong>, an EHR integration engineer based in Pune, India. For the last few years I've built production microservices for US healthcare teams — the kind of work where one missed field or one undocumented vendor quirk pages someone at 2 a.m.</p>
+                    <p>My focus is the messy middle: making 20+ EHRs look like one clean API, syncing data both ways, and shipping HIPAA-compliant AI workflows on <strong>LangGraph</strong> and <strong>LangChain</strong>. I care about clean contracts, boring reliability, and delivering on what I said I'd deliver.</p>
+                </div>
+                <div class="terminal" id="terminal">
+                    <div class="terminal-head">
+                        <span class="terminal-dot terminal-dot-red"></span>
+                        <span class="terminal-dot terminal-dot-amber"></span>
+                        <span class="terminal-dot terminal-dot-green"></span>
+                        <span class="terminal-title">aniket@portfolio ~ </span>
+                    </div>
+                    <pre class="terminal-body"><code id="terminal-output"></code><span class="terminal-cursor" id="terminal-cursor">▋</span></pre>
+                </div>
+            </div>
+        </section>
+
         <section id="contact" class="container section">
-            <h2>Get in touch</h2>
-            <p>Have an integration problem, a healthcare data mess, or a healthcare-AI idea you want to sanity-check? I'd love to hear from you.</p>
+            <h2>Start a project</h2>
+            <p>Building an ambient scribe, an RPM tool, an AI coding product or a care platform that needs to talk to an EHR? Tell me what you're connecting and what data needs to move — I'll come back with a scope, milestones and a timeline.</p>
+            <div class="cta-row contact-cta">
+                <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Email me →</a>
+                <a class="btn btn-ghost" href="https://linkedin.com/in/aniket-pathak12" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
             <ul class="contact-list">
                 <li><a href="mailto:aniketpathak34@gmail.com">aniketpathak34@gmail.com</a></li>
                 <li><a href="tel:+917030344210">+91 70303 44210</a></li>
@@ -385,7 +504,7 @@
         <div class="cmdk-card">
             <div class="cmdk-input-row">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="cmdk-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input class="cmdk-input" id="cmdk-input" type="text" placeholder="Jump to a section, copy an email, switch a tab…" aria-label="Command palette search" autocomplete="off" spellcheck="false">
+                <input class="cmdk-input" id="cmdk-input" type="text" placeholder="Jump to a section, start a project, switch a tab…" aria-label="Command palette search" autocomplete="off" spellcheck="false">
                 <kbd class="cmdk-esc">esc</kbd>
             </div>
             <ul class="cmdk-list" id="cmdk-list" role="listbox"></ul>
@@ -399,11 +518,11 @@
 
     <footer class="site-footer">
         <div class="container">
-            <span>© <span id="year"></span> Aniket Pathak</span>
-            <span class="footer-note">Built with plain HTML, CSS, JS · Deployed on GitHub Pages</span>
+            <span>© <span id="year"></span> Aniket Pathak · EHR Integration Engineer</span>
+            <span class="footer-note">Available for new projects · <a href="mailto:aniketpathak34@gmail.com">aniketpathak34@gmail.com</a></span>
         </div>
     </footer>
 
-    <script src="script.js?v=8"></script>
+    <script src="script.js?v=9"></script>
 </body>
 </html>
