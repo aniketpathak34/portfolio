@@ -469,7 +469,26 @@ async function timedFetch(url) {
     const text = await resp.text();
     const t1 = performance.now();
     if (!resp.ok) throw new Error(`HTTP ${resp.status} · ${url.replace(FHIR_BASE, "")}`);
+    bumpCallCounter();
     return { ms: t1 - t0, bytes: new Blob([text]).size, json: JSON.parse(text) };
+}
+
+// -------------------------------------------------------------------
+// Live FHIR-call counter (persisted across visits in localStorage)
+// -------------------------------------------------------------------
+const CALL_COUNT_KEY = "ehrbridge.callCount";
+function readCallCount() {
+    const n = parseInt(localStorage.getItem(CALL_COUNT_KEY) || "0", 10);
+    return Number.isFinite(n) ? n : 0;
+}
+function renderCallCount(n) {
+    const el = document.getElementById("call-counter");
+    if (el) el.textContent = n.toLocaleString();
+}
+function bumpCallCounter() {
+    let n = readCallCount() + 1;
+    try { localStorage.setItem(CALL_COUNT_KEY, String(n)); } catch (e) { /* ignore */ }
+    renderCallCount(n);
 }
 
 // -------------------------------------------------------------------
@@ -704,10 +723,174 @@ function wireScrollReveal() {
 }
 
 // -------------------------------------------------------------------
+// Hero terminal — types a live-style FHIR transformation
+// -------------------------------------------------------------------
+function runHeroTerminal() {
+    const out = document.getElementById("hero-terminal-output");
+    const cursor = document.getElementById("hero-terminal-cursor");
+    if (!out) return;
+
+    const lines = [
+        { d: 320, h: '<span class="prompt">$</span> <span class="cmd">curl /ehr-bridge/Patient/smart-1413</span>\n' },
+        { d: 480, h: '<span class="out">→ upstream: eClinicalWorks · legacy envelope</span>\n\n' },
+        { d: 70,  h: '<span class="out">  {"Response":{"ResponseCode":"0","PatientInfo":[</span>\n' },
+        { d: 70,  h: '<span class="out">    {"FName":"PRIYA","LName":"SHAH",</span>\n' },
+        { d: 620, h: '<span class="out">     "DOB":"04/12/1987","Sex":"F"}]}}</span>\n\n' },
+        { d: 520, h: '<span class="out">→ normalizing…</span>\n\n' },
+        { d: 70,  h: '  {<span class="j-key">"patient_id"</span>: <span class="j-string">"smart-1413"</span>,\n' },
+        { d: 70,  h: '   <span class="j-key">"name"</span>: {<span class="j-key">"first"</span>: <span class="j-string">"Priya"</span>, <span class="j-key">"last"</span>: <span class="j-string">"Shah"</span>},\n' },
+        { d: 70,  h: '   <span class="j-key">"dob"</span>: <span class="j-string">"1987-04-12"</span>,\n' },
+        { d: 600, h: '   <span class="j-key">"gender"</span>: <span class="j-string">"female"</span>}\n\n' },
+        { d: 200, h: '<span class="str">✓ 200 OK · one schema, every EHR · 14 ms</span>\n' },
+    ];
+
+    let i = 0;
+    function step() {
+        if (i >= lines.length) { cursor.classList.add("is-done"); return; }
+        out.insertAdjacentHTML("beforeend", lines[i].h);
+        i++;
+        setTimeout(step, lines[i - 1].d);
+    }
+
+    const term = document.getElementById("hero-terminal");
+    if (!term || !("IntersectionObserver" in window)) { step(); return; }
+    const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { io.disconnect(); step(); }
+    }, { threshold: 0.25 });
+    io.observe(term);
+}
+
+// -------------------------------------------------------------------
+// EHR logo marquee
+// -------------------------------------------------------------------
+const EHR_LIST = [
+    "Epic", "Athena", "Cerner", "eClinicalWorks", "NextGen", "Allscripts",
+    "Elation", "OpenEMR", "Nextech", "DrChrono", "ModMed", "Meditech",
+    "Office Practicum", "Praxis EHR", "MedHost", "McKesson", "Greenway Health",
+    "CareCloud", "EyeMD", "Amazing Charts", "Cerbo", "CharmHealth", "MDLogic",
+    "Canvas Medical", "Open Dental", "Alligence",
+];
+function populateMarquee() {
+    const track = document.getElementById("marquee-track");
+    if (!track) return;
+    // Duplicate the list so the -50% translate loops seamlessly.
+    const items = EHR_LIST.concat(EHR_LIST);
+    track.innerHTML = items
+        .map((n) => `<span class="marquee-item">${n}</span>`)
+        .join("");
+}
+
+// -------------------------------------------------------------------
+// Coverage heatmap (26 EHRs × 8 operations, interactive)
+// -------------------------------------------------------------------
+function renderHeatmap() {
+    const grid = document.getElementById("heatmap-grid");
+    const filters = document.getElementById("heatmap-filters");
+    const tip = document.getElementById("heatmap-tip");
+    const heatmap = document.getElementById("heatmap");
+    if (!grid || !filters) return;
+
+    const OPS = ["Patient", "Conditions", "Medications", "Vitals", "Documents", "Scheduling", "Bulk data", "Webhooks"];
+    const OPS_SHORT = ["Patient", "Cond.", "Meds", "Vitals", "Docs", "Sched.", "Bulk", "Hooks"];
+    const STATUS = ["Not wired", "Partial", "Shipped"];
+    const DATA = [
+        { ehr: "Epic",             c: [2,2,2,2,2,1,1,1] },
+        { ehr: "Athena",           c: [2,2,2,2,2,2,1,1] },
+        { ehr: "Cerner",           c: [2,2,2,2,2,1,1,0] },
+        { ehr: "eClinicalWorks",   c: [2,2,2,2,2,2,2,1] },
+        { ehr: "NextGen",          c: [2,2,2,1,2,1,0,0] },
+        { ehr: "Allscripts",       c: [2,2,2,1,2,1,0,0] },
+        { ehr: "Elation",          c: [2,2,2,1,2,2,0,2] },
+        { ehr: "OpenEMR",          c: [2,2,1,1,2,1,1,0] },
+        { ehr: "Nextech",          c: [2,1,1,1,2,2,0,1] },
+        { ehr: "DrChrono",         c: [2,2,2,1,2,2,0,1] },
+        { ehr: "ModMed",           c: [2,2,2,1,2,1,0,0] },
+        { ehr: "Meditech",         c: [2,2,1,1,2,1,1,0] },
+        { ehr: "Office Practicum", c: [2,1,1,1,2,1,0,0] },
+        { ehr: "Praxis EHR",       c: [2,1,1,0,1,1,0,0] },
+        { ehr: "MedHost",          c: [2,1,1,1,2,0,1,0] },
+        { ehr: "McKesson",         c: [2,1,1,0,2,0,1,0] },
+        { ehr: "Greenway Health",  c: [2,2,2,1,2,1,0,1] },
+        { ehr: "CareCloud",        c: [2,2,1,1,2,2,0,1] },
+        { ehr: "EyeMD",            c: [2,1,1,0,1,1,0,0] },
+        { ehr: "Amazing Charts",   c: [2,1,1,1,1,0,0,0] },
+        { ehr: "Cerbo",            c: [2,2,1,1,1,2,0,1] },
+        { ehr: "CharmHealth",      c: [2,2,2,1,2,2,0,1] },
+        { ehr: "MDLogic",          c: [2,1,1,0,1,1,0,0] },
+        { ehr: "Canvas Medical",   c: [2,2,2,1,1,1,0,1] },
+        { ehr: "Open Dental",      c: [2,1,1,0,2,2,0,0] },
+        { ehr: "Alligence",        c: [2,1,1,0,1,1,0,0] },
+    ];
+
+    const make = (cls, text) => {
+        const d = document.createElement("div");
+        d.className = cls;
+        if (text != null) d.textContent = text;
+        return d;
+    };
+
+    // Header row
+    grid.appendChild(make("hm-corner", "EHR \\ Operation"));
+    OPS_SHORT.forEach((op, i) => {
+        const h = make("hm-colhead", op);
+        h.dataset.op = String(i);
+        h.title = OPS[i];
+        grid.appendChild(h);
+    });
+
+    // Data rows
+    DATA.forEach((row) => {
+        grid.appendChild(make("hm-rowhead", row.ehr));
+        row.c.forEach((v, i) => {
+            const cell = make(`hm-cell hm-${v}`);
+            cell.dataset.op = String(i);
+            const label = `${row.ehr} · ${OPS[i]} — ${STATUS[v]}`;
+            cell.title = label;
+            cell.tabIndex = 0;
+            const show = () => { tip.hidden = false; tip.textContent = label; };
+            cell.addEventListener("mouseenter", show);
+            cell.addEventListener("focus", show);
+            grid.appendChild(cell);
+        });
+    });
+
+    // Filter chips
+    let activeOp = -1;
+    const chips = [];
+    function applyFilter(op) {
+        activeOp = op;
+        heatmap.classList.toggle("is-filtered", op >= 0);
+        grid.querySelectorAll(".hm-cell, .hm-colhead").forEach((el) => {
+            el.classList.toggle("hm-focus", op >= 0 && el.dataset.op === String(op));
+        });
+        chips.forEach((ch) => ch.classList.toggle("is-active", Number(ch.dataset.op) === op));
+        if (op >= 0) { tip.hidden = false; tip.textContent = `Focused: ${OPS[op]}`; }
+        else { tip.hidden = true; }
+    }
+    const allChip = make("hm-chip", "All operations");
+    allChip.dataset.op = "-1";
+    allChip.classList.add("is-active");
+    allChip.addEventListener("click", () => applyFilter(-1));
+    filters.appendChild(allChip);
+    chips.push(allChip);
+    OPS.forEach((op, i) => {
+        const ch = make("hm-chip", op);
+        ch.dataset.op = String(i);
+        ch.addEventListener("click", () => applyFilter(activeOp === i ? -1 : i));
+        filters.appendChild(ch);
+        chips.push(ch);
+    });
+}
+
+// -------------------------------------------------------------------
 // Boot
 // -------------------------------------------------------------------
 wireScrollReveal();
 wireCmdK();
 runTerminal();
+runHeroTerminal();
+populateMarquee();
+renderHeatmap();
+renderCallCount(readCallCount());
 updateRequestPreview();
 populatePatientDropdown();

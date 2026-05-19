@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=11">
+    <link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
     <header class="site-header">
@@ -56,16 +56,33 @@
 
     <main id="top">
         <section class="hero container">
-            <p class="availability"><span class="availability-dot"></span> Available for new projects — from 2026</p>
-            <p class="eyebrow">EHR Integration Engineer</p>
-            <h1>I connect digital health products to the <span class="accent">20+ US EHRs</span> they need to talk to.</h1>
-            <p class="lede">FHIR R4, HL7 v2, bi-directional sync and write-back — the integration plumbing that lets ambient scribes, RPM, AI medical coding and care platforms actually exchange data with Epic, Athena, eClinicalWorks, NextGen, Healthie, Elation and the rest.</p>
-            <div class="cta-row">
-                <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Start a project →</a>
-                <a class="btn btn-ghost" href="#tryout">See a live demo</a>
+            <div class="hero-copy">
+                <p class="availability"><span class="availability-dot"></span> Available for new projects — from 2026</p>
+                <p class="eyebrow">EHR Integration Engineer</p>
+                <h1>I connect digital health products to the <span class="accent">20+ US EHRs</span> they need to talk to.</h1>
+                <p class="lede">FHIR R4, HL7 v2, bi-directional sync and write-back — the integration plumbing that lets ambient scribes, RPM, AI medical coding and care platforms actually exchange data with Epic, Athena, eClinicalWorks, NextGen, Healthie, Elation and the rest.</p>
+                <div class="cta-row">
+                    <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Start a project →</a>
+                    <a class="btn btn-ghost" href="#tryout">Run a live FHIR call →</a>
+                </div>
+                <p class="hero-meta">Pune, India · Works US business hours · HIPAA-aware · BAA on request</p>
             </div>
-            <p class="hero-meta">Pune, India · Works US business hours · HIPAA-aware · BAA on request</p>
+            <div class="hero-demo">
+                <div class="terminal" id="hero-terminal">
+                    <div class="terminal-head">
+                        <span class="terminal-dot terminal-dot-red"></span>
+                        <span class="terminal-dot terminal-dot-amber"></span>
+                        <span class="terminal-dot terminal-dot-green"></span>
+                        <span class="terminal-title">ehr-bridge — one schema, every EHR</span>
+                    </div>
+                    <pre class="terminal-body"><code id="hero-terminal-output"></code><span class="terminal-cursor" id="hero-terminal-cursor">▋</span></pre>
+                </div>
+            </div>
         </section>
+
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track" id="marquee-track"></div>
+        </div>
 
         <section id="services" class="container section">
             <h2>Work with me</h2>
@@ -205,158 +222,31 @@
                 <span class="coverage-num-label">EHR systems integrated<br>— and adding more</span>
             </div>
 
-            <div class="ehr-grid">
-                <div class="ehr-tile"><span class="ehr-name">Athena</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Epic</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Cerner</span></div>
-                <div class="ehr-tile"><span class="ehr-name">NextGen</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Allscripts</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Elation</span></div>
-                <div class="ehr-tile"><span class="ehr-name">OpenEMR</span></div>
-                <div class="ehr-tile"><span class="ehr-name">eClinicalWorks</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Nextech</span></div>
-                <div class="ehr-tile"><span class="ehr-name">DrChrono</span></div>
-                <div class="ehr-tile"><span class="ehr-name">ModMed</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Meditech</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Office Practicum</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Praxis EHR</span></div>
-                <div class="ehr-tile"><span class="ehr-name">MedHost</span></div>
-                <div class="ehr-tile"><span class="ehr-name">McKesson</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Greenway Health</span></div>
-                <div class="ehr-tile"><span class="ehr-name">CareCloud</span></div>
-                <div class="ehr-tile"><span class="ehr-name">EyeMD</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Amazing Charts</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Cerbo</span></div>
-                <div class="ehr-tile"><span class="ehr-name">CharmHealth</span></div>
-                <div class="ehr-tile"><span class="ehr-name">MDLogic</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Canvas Medical</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Open Dental</span></div>
-                <div class="ehr-tile"><span class="ehr-name">Alligence</span></div>
+            <h3 class="coverage-subhead">Operation-level coverage</h3>
+            <p class="coverage-sub">Every EHR, every operation, one grid. Tap a chip to focus a single operation; hover any cell for detail.</p>
+
+            <div class="heatmap" id="heatmap">
+                <div class="heatmap-toolbar">
+                    <div class="heatmap-filters" id="heatmap-filters" role="group" aria-label="Filter coverage by operation"></div>
+                    <div class="heatmap-legend">
+                        <span><i class="hm-key hm-2"></i> Shipped</span>
+                        <span><i class="hm-key hm-1"></i> Partial</span>
+                        <span><i class="hm-key hm-0"></i> Not wired</span>
+                    </div>
+                </div>
+                <div class="heatmap-scroll">
+                    <div class="heatmap-grid" id="heatmap-grid" aria-label="EHR coverage heatmap"></div>
+                </div>
+                <div class="heatmap-tip" id="heatmap-tip" role="status" aria-live="polite" hidden></div>
             </div>
 
-            <h3 class="coverage-subhead">Operation-level detail</h3>
-            <p class="coverage-sub">A closer look at the operations across the systems I work with most often — Patient, Conditions, Medications, Vitals, Documents, Scheduling, Bulk data and Webhooks.</p>
-
-            <div class="matrix-wrap">
-                <div class="matrix-legend">
-                    <span><i class="m-dot m-yes"></i> Shipped</span>
-                    <span><i class="m-dot m-partial"></i> Partial / subset</span>
-                    <span><i class="m-dot m-no"></i> Not wired</span>
-                </div>
-                <div class="matrix-scroll">
-                    <table class="matrix">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="matrix-corner">EHR \ Operation</th>
-                                <th scope="col">Patient</th>
-                                <th scope="col">Conditions</th>
-                                <th scope="col">Medications</th>
-                                <th scope="col">Vitals</th>
-                                <th scope="col">Documents</th>
-                                <th scope="col">Scheduling</th>
-                                <th scope="col">Bulk data</th>
-                                <th scope="col">Webhooks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">eClinicalWorks</th>
-                                <td><i class="m-dot m-yes" title="Shipped"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Epic / OpenEpic</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Athena (FHIR R4)</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">NextGen</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Nextech (PM &amp; ICP)</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Cerner</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Elation</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Allscripts</th>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-yes"></i></td>
-                                <td><i class="m-dot m-partial"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                                <td><i class="m-dot m-no"></i></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </section>
 
         <section id="tryout" class="section tryout-wrap">
             <div class="container">
                 <h2>See it work — Bridge Console</h2>
                 <p class="section-lede">A live, miniature version of the integration pattern I build. Pick a patient, flip between resources (<em>Patient · Conditions · Medications · Vitals</em>), and every call hits the public <a href="https://r4.smarthealthit.org/" target="_blank" rel="noopener">SMART Health IT FHIR R4</a> sandbox for real. The <strong>Patient</strong> tab also toggles ECW, so you can watch a legacy vendor envelope collapse into the same normalized shape.</p>
+                <p class="live-counter"><span class="live-counter-dot"></span> Live FHIR calls run in this console: <b id="call-counter">0</b></p>
 
                 <div class="arch-diagram" aria-hidden="true">
                     <svg viewBox="0 0 820 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Bridge architecture diagram">
@@ -396,6 +286,14 @@
                                 <line x1="515" y1="100" x2="645" y2="110"></line>
                                 <line x1="515" y1="105" x2="645" y2="150"></line>
                                 <line x1="515" y1="110" x2="645" y2="190"></line>
+                            </g>
+                            <g fill="#5ee2c3">
+                                <circle r="3.4"><animateMotion dur="1.5s" repeatCount="indefinite" path="M170 100 L300 100"></animateMotion></circle>
+                                <circle r="3"><animateMotion dur="2s" repeatCount="indefinite" begin="0.2s" path="M515 90 L645 30"></animateMotion></circle>
+                                <circle r="3"><animateMotion dur="2s" repeatCount="indefinite" begin="0.55s" path="M515 95 L645 70"></animateMotion></circle>
+                                <circle r="3"><animateMotion dur="2s" repeatCount="indefinite" begin="0.9s" path="M515 100 L645 110"></animateMotion></circle>
+                                <circle r="3"><animateMotion dur="2s" repeatCount="indefinite" begin="1.25s" path="M515 105 L645 150"></animateMotion></circle>
+                                <circle r="3"><animateMotion dur="2s" repeatCount="indefinite" begin="1.6s" path="M515 110 L645 190"></animateMotion></circle>
                             </g>
                         </g>
                     </svg>
@@ -566,6 +464,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=11"></script>
+    <script src="script.js?v=12"></script>
 </body>
 </html>
