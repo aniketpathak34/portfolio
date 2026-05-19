@@ -41,7 +41,12 @@ h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 700; }
 h2 { font-size: 1.75rem; font-weight: 600; margin-bottom: 1.25rem; }
 h3 { font-size: 1.15rem; font-weight: 600; }
 
-.accent { color: var(--accent); }
+.accent {
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
 
 /* Header */
 .site-header {
@@ -71,6 +76,7 @@ h3 { font-size: 1.15rem; font-weight: 600; }
 .brand:hover { text-decoration: none; }
 
 nav a {
+    position: relative;
     color: var(--muted);
     margin-left: 1.5rem;
     font-size: 0.95rem;
@@ -128,8 +134,12 @@ nav a:hover { color: var(--text); text-decoration: none; }
 .btn-primary {
     background: var(--accent);
     color: #0b0d10;
+    box-shadow: 0 8px 26px -10px rgba(124, 156, 255, 0.65);
 }
-.btn-primary:hover { background: #94aeff; }
+.btn-primary:hover {
+    background: #94aeff;
+    box-shadow: 0 12px 34px -10px rgba(124, 156, 255, 0.9);
+}
 .btn-ghost {
     background: transparent;
     border-color: var(--border);
@@ -1288,4 +1298,82 @@ nav a:hover { color: var(--text); text-decoration: none; }
     h1 { font-size: 1.85rem; }
     .btn { width: 100%; }
     .cta-row { flex-direction: column; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Visual polish pass — ambient depth, motion, scroll chrome
+   ════════════════════════════════════════════════════════════ */
+
+/* Ambient background glow — fixed layer behind all content */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(640px circle at 90% -4%, rgba(124, 156, 255, 0.15), transparent 60%),
+        radial-gradient(560px circle at 2% 6%, rgba(94, 226, 195, 0.10), transparent 56%);
+}
+main, .site-footer { position: relative; z-index: 1; }
+
+/* Faint blueprint grid behind the hero */
+.hero { position: relative; }
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(124, 156, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 156, 255, 0.055) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(circle at 60% 38%, #000, transparent 74%);
+    mask-image: radial-gradient(circle at 60% 38%, #000, transparent 74%);
+}
+.hero-copy, .hero-demo { position: relative; z-index: 1; }
+
+/* Scroll progress bar */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    z-index: 100;
+    pointer-events: none;
+    transition: transform 0.1s linear;
+}
+
+/* Header gains a shadow once you scroll */
+.site-header { transition: box-shadow 0.2s ease; }
+.site-header.is-scrolled { box-shadow: 0 10px 34px -16px rgba(0, 0, 0, 0.85); }
+
+/* Nav active-section underline */
+nav a.is-active { color: var(--text); }
+nav a.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* Soft accent glow on card hover */
+.service-card:hover,
+.project-card:hover,
+.contact-card:hover,
+.ehr-tile:hover {
+    box-shadow: 0 14px 36px -18px rgba(124, 156, 255, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-progress { transition: none; }
 }

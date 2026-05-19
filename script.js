@@ -768,7 +768,10 @@ const EHR_LIST = [
     "Elation", "OpenEMR", "Nextech", "DrChrono", "ModMed", "Meditech",
     "Office Practicum", "Praxis EHR", "MedHost", "McKesson", "Greenway Health",
     "CareCloud", "EyeMD", "Amazing Charts", "Cerbo", "CharmHealth", "MDLogic",
-    "Canvas Medical", "Open Dental", "Alligence",
+    "Canvas Medical", "Open Dental", "Alligence", "ALIS", "OncoEMR",
+    "Practice Fusion", "PointClickCare", "AdvancedMD", "Tebra", "IntakeQ",
+    "Innerwell", "Healthie", "Wellkin", "Office Ally", "Eaglesoft", "HeyDonto",
+    "CareStack", "Denticon", "Dentrix Ascend",
 ];
 function populateMarquee() {
     const track = document.getElementById("marquee-track");
@@ -781,108 +784,6 @@ function populateMarquee() {
 }
 
 // -------------------------------------------------------------------
-// Coverage heatmap (26 EHRs × 8 operations, interactive)
-// -------------------------------------------------------------------
-function renderHeatmap() {
-    const grid = document.getElementById("heatmap-grid");
-    const filters = document.getElementById("heatmap-filters");
-    const tip = document.getElementById("heatmap-tip");
-    const heatmap = document.getElementById("heatmap");
-    if (!grid || !filters) return;
-
-    const OPS = ["Patient", "Conditions", "Medications", "Vitals", "Documents", "Scheduling", "Bulk data", "Webhooks"];
-    const OPS_SHORT = ["Patient", "Cond.", "Meds", "Vitals", "Docs", "Sched.", "Bulk", "Hooks"];
-    const STATUS = ["Not wired", "Partial", "Shipped"];
-    const DATA = [
-        { ehr: "Epic",             c: [2,2,2,2,2,1,1,1] },
-        { ehr: "Athena",           c: [2,2,2,2,2,2,1,1] },
-        { ehr: "Cerner",           c: [2,2,2,2,2,1,1,0] },
-        { ehr: "eClinicalWorks",   c: [2,2,2,2,2,2,2,1] },
-        { ehr: "NextGen",          c: [2,2,2,1,2,1,0,0] },
-        { ehr: "Allscripts",       c: [2,2,2,1,2,1,0,0] },
-        { ehr: "Elation",          c: [2,2,2,1,2,2,0,2] },
-        { ehr: "OpenEMR",          c: [2,2,1,1,2,1,1,0] },
-        { ehr: "Nextech",          c: [2,1,1,1,2,2,0,1] },
-        { ehr: "DrChrono",         c: [2,2,2,1,2,2,0,1] },
-        { ehr: "ModMed",           c: [2,2,2,1,2,1,0,0] },
-        { ehr: "Meditech",         c: [2,2,1,1,2,1,1,0] },
-        { ehr: "Office Practicum", c: [2,1,1,1,2,1,0,0] },
-        { ehr: "Praxis EHR",       c: [2,1,1,0,1,1,0,0] },
-        { ehr: "MedHost",          c: [2,1,1,1,2,0,1,0] },
-        { ehr: "McKesson",         c: [2,1,1,0,2,0,1,0] },
-        { ehr: "Greenway Health",  c: [2,2,2,1,2,1,0,1] },
-        { ehr: "CareCloud",        c: [2,2,1,1,2,2,0,1] },
-        { ehr: "EyeMD",            c: [2,1,1,0,1,1,0,0] },
-        { ehr: "Amazing Charts",   c: [2,1,1,1,1,0,0,0] },
-        { ehr: "Cerbo",            c: [2,2,1,1,1,2,0,1] },
-        { ehr: "CharmHealth",      c: [2,2,2,1,2,2,0,1] },
-        { ehr: "MDLogic",          c: [2,1,1,0,1,1,0,0] },
-        { ehr: "Canvas Medical",   c: [2,2,2,1,1,1,0,1] },
-        { ehr: "Open Dental",      c: [2,1,1,0,2,2,0,0] },
-        { ehr: "Alligence",        c: [2,1,1,0,1,1,0,0] },
-    ];
-
-    const make = (cls, text) => {
-        const d = document.createElement("div");
-        d.className = cls;
-        if (text != null) d.textContent = text;
-        return d;
-    };
-
-    // Header row
-    grid.appendChild(make("hm-corner", "EHR \\ Operation"));
-    OPS_SHORT.forEach((op, i) => {
-        const h = make("hm-colhead", op);
-        h.dataset.op = String(i);
-        h.title = OPS[i];
-        grid.appendChild(h);
-    });
-
-    // Data rows
-    DATA.forEach((row) => {
-        grid.appendChild(make("hm-rowhead", row.ehr));
-        row.c.forEach((v, i) => {
-            const cell = make(`hm-cell hm-${v}`);
-            cell.dataset.op = String(i);
-            const label = `${row.ehr} · ${OPS[i]} — ${STATUS[v]}`;
-            cell.title = label;
-            cell.tabIndex = 0;
-            const show = () => { tip.hidden = false; tip.textContent = label; };
-            cell.addEventListener("mouseenter", show);
-            cell.addEventListener("focus", show);
-            grid.appendChild(cell);
-        });
-    });
-
-    // Filter chips
-    let activeOp = -1;
-    const chips = [];
-    function applyFilter(op) {
-        activeOp = op;
-        heatmap.classList.toggle("is-filtered", op >= 0);
-        grid.querySelectorAll(".hm-cell, .hm-colhead").forEach((el) => {
-            el.classList.toggle("hm-focus", op >= 0 && el.dataset.op === String(op));
-        });
-        chips.forEach((ch) => ch.classList.toggle("is-active", Number(ch.dataset.op) === op));
-        if (op >= 0) { tip.hidden = false; tip.textContent = `Focused: ${OPS[op]}`; }
-        else { tip.hidden = true; }
-    }
-    const allChip = make("hm-chip", "All operations");
-    allChip.dataset.op = "-1";
-    allChip.classList.add("is-active");
-    allChip.addEventListener("click", () => applyFilter(-1));
-    filters.appendChild(allChip);
-    chips.push(allChip);
-    OPS.forEach((op, i) => {
-        const ch = make("hm-chip", op);
-        ch.dataset.op = String(i);
-        ch.addEventListener("click", () => applyFilter(activeOp === i ? -1 : i));
-        filters.appendChild(ch);
-        chips.push(ch);
-    });
-}
-
-// -------------------------------------------------------------------
 // Boot
 // -------------------------------------------------------------------
 wireScrollReveal();
@@ -890,7 +791,49 @@ wireCmdK();
 runTerminal();
 runHeroTerminal();
 populateMarquee();
-renderHeatmap();
 renderCallCount(readCallCount());
 updateRequestPreview();
 populatePatientDropdown();
+
+// -------------------------------------------------------------------
+// Scroll chrome — progress bar, header shadow, nav scroll-spy
+// -------------------------------------------------------------------
+function wireScrollChrome() {
+    const bar = document.getElementById("scroll-progress");
+    const header = document.querySelector(".site-header");
+    let ticking = false;
+    function update() {
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - doc.clientHeight;
+        const pct = max > 0 ? doc.scrollTop / max : 0;
+        if (bar) bar.style.transform = `scaleX(${pct})`;
+        if (header) header.classList.toggle("is-scrolled", doc.scrollTop > 8);
+        ticking = false;
+    }
+    window.addEventListener("scroll", () => {
+        if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+}
+
+function wireScrollSpy() {
+    const links = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+    const map = new Map();
+    links.forEach((a) => {
+        const sec = document.getElementById(a.getAttribute("href").slice(1));
+        if (sec) map.set(sec, a);
+    });
+    if (!map.size || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            links.forEach((l) => l.classList.remove("is-active"));
+            const a = map.get(e.target);
+            if (a) a.classList.add("is-active");
+        });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    map.forEach((_, sec) => io.observe(sec));
+}
+
+wireScrollChrome();
+wireScrollSpy();

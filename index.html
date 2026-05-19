@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aniket Pathak — EHR Integration Engineer</title>
-    <meta name="description" content="Independent EHR integration engineer. I connect digital health products to 20+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back. Available for new projects.">
+    <meta name="description" content="Independent EHR integration engineer. I connect digital health products to 40+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back. Available for new projects.">
     <meta name="author" content="Aniket Pathak">
     <meta name="theme-color" content="#0b0d10">
     <link rel="canonical" href="https://aniketpathak34.github.io/portfolio/">
@@ -17,7 +17,7 @@
     <!-- OpenGraph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Aniket Pathak — EHR Integration Engineer">
-    <meta property="og:description" content="I connect digital health products to 20+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back. Available for new projects.">
+    <meta property="og:description" content="I connect digital health products to 40+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back. Available for new projects.">
     <meta property="og:url" content="https://aniketpathak34.github.io/portfolio/">
     <meta property="og:image" content="https://aniketpathak34.github.io/portfolio/og-image.png">
     <meta property="og:image:width" content="1200">
@@ -27,15 +27,16 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Aniket Pathak — EHR Integration Engineer">
-    <meta name="twitter:description" content="I connect digital health products to 20+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back.">
+    <meta name="twitter:description" content="I connect digital health products to 40+ US EHRs — FHIR R4, HL7 v2, bi-directional sync and write-back.">
     <meta name="twitter:image" content="https://aniketpathak34.github.io/portfolio/og-image.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=14">
+    <link rel="stylesheet" href="styles.css?v=15">
 </head>
 <body>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
     <header class="site-header">
         <div class="container nav-wrap">
             <a class="brand" href="#top">AP<span class="brand-dot">.</span></a>
@@ -59,7 +60,7 @@
             <div class="hero-copy">
                 <p class="availability"><span class="availability-dot"></span> Available for new projects — from 2026</p>
                 <p class="eyebrow">EHR Integration Engineer</p>
-                <h1>I connect digital health products to the <span class="accent">20+ US EHRs</span> they need to talk to.</h1>
+                <h1>I connect digital health products to the <span class="accent">40+ US EHRs</span> they need to talk to.</h1>
                 <p class="lede">FHIR R4, HL7 v2, bi-directional sync and write-back — the integration plumbing that lets ambient scribes, RPM, AI medical coding and care platforms actually exchange data with Epic, Athena, eClinicalWorks, NextGen, Healthie, Elation and the rest.</p>
                 <div class="cta-row">
                     <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Start a project →</a>
@@ -215,23 +216,52 @@
 
         <section id="coverage" class="container section">
             <h2>Integration coverage</h2>
-            <p class="section-lede"><strong>26 EHRs integrated</strong> — each with its own API, auth and quirks. Tap a chip to focus an operation; hover a cell for detail.</p>
+            <p class="section-lede"><strong>42 EHRs integrated</strong> — each with its own API, auth, sandbox process and undocumented quirks. One adapter pattern, every vendor behind one clean contract.</p>
 
-            <div class="heatmap" id="heatmap">
-                <div class="heatmap-toolbar">
-                    <div class="heatmap-filters" id="heatmap-filters" role="group" aria-label="Filter coverage by operation"></div>
-                    <div class="heatmap-legend">
-                        <span><i class="hm-key hm-2"></i> Shipped</span>
-                        <span><i class="hm-key hm-1"></i> Partial</span>
-                        <span><i class="hm-key hm-0"></i> Not wired</span>
-                    </div>
-                </div>
-                <div class="heatmap-scroll">
-                    <div class="heatmap-grid" id="heatmap-grid" aria-label="EHR coverage heatmap"></div>
-                </div>
-                <div class="heatmap-tip" id="heatmap-tip" role="status" aria-live="polite" hidden></div>
+            <div class="ehr-grid">
+                <div class="ehr-tile"><span class="ehr-name">Athena</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Epic</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Cerner</span></div>
+                <div class="ehr-tile"><span class="ehr-name">NextGen</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Allscripts (Veradigm)</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Elation</span></div>
+                <div class="ehr-tile"><span class="ehr-name">OpenEMR</span></div>
+                <div class="ehr-tile"><span class="ehr-name">eClinicalWorks</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Nextech</span></div>
+                <div class="ehr-tile"><span class="ehr-name">DrChrono</span></div>
+                <div class="ehr-tile"><span class="ehr-name">ModMed</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Meditech</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Office Practicum</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Praxis EHR</span></div>
+                <div class="ehr-tile"><span class="ehr-name">MedHost</span></div>
+                <div class="ehr-tile"><span class="ehr-name">McKesson</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Greenway Health</span></div>
+                <div class="ehr-tile"><span class="ehr-name">CareCloud</span></div>
+                <div class="ehr-tile"><span class="ehr-name">EyeMD</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Amazing Charts</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Cerbo</span></div>
+                <div class="ehr-tile"><span class="ehr-name">CharmHealth</span></div>
+                <div class="ehr-tile"><span class="ehr-name">MDLogic</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Canvas Medical</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Open Dental</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Alligence</span></div>
+                <div class="ehr-tile"><span class="ehr-name">ALIS</span></div>
+                <div class="ehr-tile"><span class="ehr-name">OncoEMR</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Practice Fusion</span></div>
+                <div class="ehr-tile"><span class="ehr-name">PointClickCare</span></div>
+                <div class="ehr-tile"><span class="ehr-name">AdvancedMD</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Tebra (Kareo)</span></div>
+                <div class="ehr-tile"><span class="ehr-name">IntakeQ</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Innerwell</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Healthie</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Wellkin</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Office Ally</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Eaglesoft</span></div>
+                <div class="ehr-tile"><span class="ehr-name">HeyDonto</span></div>
+                <div class="ehr-tile"><span class="ehr-name">CareStack</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Denticon</span></div>
+                <div class="ehr-tile"><span class="ehr-name">Dentrix Ascend</span></div>
             </div>
-
         </section>
 
         <section id="tryout" class="section tryout-wrap">
@@ -456,6 +486,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=12"></script>
+    <script src="script.js?v=13"></script>
 </body>
 </html>
