@@ -327,11 +327,11 @@ nav a:hover { color: var(--text); text-decoration: none; }
 .coverage-stat {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin: 0 0 1.5rem;
+    gap: 0.85rem;
+    margin: 0 0 1.25rem;
 }
 .coverage-num {
-    font-size: clamp(3rem, 9vw, 4.75rem);
+    font-size: clamp(2.25rem, 6vw, 3.25rem);
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.03em;
@@ -538,15 +538,15 @@ nav a:hover { color: var(--text); text-decoration: none; }
     background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.25rem;
+    padding: 1rem;
 }
 .heatmap-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
 }
 .heatmap-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .hm-chip {
@@ -586,34 +586,34 @@ nav a:hover { color: var(--text); text-decoration: none; }
 .heatmap-scroll { overflow-x: auto; }
 .heatmap-grid {
     display: grid;
-    grid-template-columns: 150px repeat(8, minmax(56px, 1fr));
-    gap: 4px;
-    min-width: 620px;
+    grid-template-columns: 122px repeat(8, minmax(44px, 1fr));
+    gap: 3px;
+    min-width: 500px;
 }
 .hm-corner, .hm-colhead {
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     color: var(--muted);
-    padding: 0.35rem 0.25rem;
+    padding: 0.2rem 0.15rem;
     text-align: center;
     align-self: end;
 }
 .hm-corner { text-align: left; }
 .hm-rowhead {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     color: var(--text);
     display: flex;
     align-items: center;
-    padding: 0 0.5rem;
+    padding: 0 0.4rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 .hm-cell {
-    height: 34px;
-    border-radius: 4px;
+    height: 20px;
+    border-radius: 3px;
     cursor: pointer;
     border: 1px solid transparent;
     transition: transform 0.12s ease, opacity 0.2s ease, box-shadow 0.12s ease;
@@ -629,9 +629,9 @@ nav a:hover { color: var(--text); text-decoration: none; }
 .heatmap.is-filtered .hm-cell:not(.hm-focus) { opacity: 0.18; }
 .heatmap.is-filtered .hm-colhead:not(.hm-focus) { opacity: 0.3; }
 .heatmap-tip {
-    margin-top: 0.9rem;
+    margin-top: 0.7rem;
     font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     color: var(--accent-2);
     background: var(--bg-soft);
     border: 1px solid var(--border);
