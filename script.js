@@ -702,8 +702,25 @@ function wireCmdK() {
 // Scroll reveal
 // -------------------------------------------------------------------
 function wireScrollReveal() {
-    const targets = document.querySelectorAll("section, .hero, .project-card, .arch-diagram, .demo");
+    // Whole-block reveals — fade up as one piece.
+    const blocks = Array.from(document.querySelectorAll(
+        ".hero, h2, .section-lede, .arch-diagram, .demo, .heatmap, .howiwork, .casestudy, .projects"
+    ));
+    // Grid items — these stagger one after another within their row.
+    const items = Array.from(document.querySelectorAll(
+        ".service-card, .contact-card, .faq details"
+    ));
+    const targets = blocks.concat(items);
     targets.forEach((el) => el.classList.add("fade-in"));
+
+    // Stagger: each item waits a little longer than its left neighbour. The
+    // delay is applied to WHEN .is-visible is added (via setTimeout), not as a
+    // CSS transition-delay — so hover transitions stay instant afterwards.
+    items.forEach((el) => {
+        const idx = Array.prototype.indexOf.call(el.parentElement.children, el);
+        el.dataset.revealDelay = String(Math.min(idx, 8) * 65);
+    });
+
     if (!("IntersectionObserver" in window)) {
         targets.forEach((el) => el.classList.add("is-visible"));
         return;
@@ -711,15 +728,39 @@ function wireScrollReveal() {
     const io = new IntersectionObserver(
         (entries) => {
             for (const entry of entries) {
-                if (entry.isIntersecting) {
+                if (!entry.isIntersecting) continue;
+                const delay = +entry.target.dataset.revealDelay || 0;
+                if (delay) {
+                    setTimeout(() => entry.target.classList.add("is-visible"), delay);
+                } else {
                     entry.target.classList.add("is-visible");
-                    io.unobserve(entry.target);
                 }
+                io.unobserve(entry.target);
             }
         },
         { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
     targets.forEach((el) => io.observe(el));
+}
+
+// -------------------------------------------------------------------
+// Hero terminal — subtle 3D tilt that follows the cursor
+// -------------------------------------------------------------------
+function wireHeroTilt() {
+    const card = document.getElementById("hero-terminal");
+    if (!card) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(hover: none)").matches) return;
+    const wrap = card.parentElement;
+    wrap.addEventListener("mousemove", (e) => {
+        const r = wrap.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform =
+            `perspective(900px) rotateX(${(-py * 5).toFixed(2)}deg) ` +
+            `rotateY(${(px * 6).toFixed(2)}deg)`;
+    });
+    wrap.addEventListener("mouseleave", () => { card.style.transform = ""; });
 }
 
 // -------------------------------------------------------------------
@@ -835,5 +876,215 @@ function wireScrollSpy() {
     map.forEach((_, sec) => io.observe(sec));
 }
 
+// -------------------------------------------------------------------
+// "More selected work" — horizontal sliding carousel
+// -------------------------------------------------------------------
+function wireWorkSlider() {
+    const track = document.getElementById("work-track");
+    const prev = document.getElementById("work-prev");
+    const next = document.getElementById("work-next");
+    if (!track || !prev || !next) return;
+
+    function cardStep() {
+        const card = track.querySelector(".project-card");
+        if (!card) return 320;
+        const gap = parseFloat(getComputedStyle(track).gap) || 16;
+        return card.getBoundingClientRect().width + gap;
+    }
+    function sync() {
+        const max = track.scrollWidth - track.clientWidth - 2;
+        const noScroll = max <= 2;
+        prev.disabled = noScroll || track.scrollLeft <= 2;
+        next.disabled = noScroll || track.scrollLeft >= max;
+    }
+    prev.addEventListener("click", () => track.scrollBy({ left: -cardStep(), behavior: "smooth" }));
+    next.addEventListener("click", () => track.scrollBy({ left: cardStep(), behavior: "smooth" }));
+    track.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    sync();
+}
+
+// -------------------------------------------------------------------
+// Coverage — turn the 40+ EHR grid into a compact 3-row auto-scroller
+// -------------------------------------------------------------------
+function wireEhrMarquee() {
+    const grid = document.querySelector(".ehr-grid");
+    if (!grid) return;
+    const tiles = Array.from(grid.querySelectorAll(".ehr-tile"));
+    if (tiles.length < 9) return;  // a short list reads fine as a plain grid
+
+    const ROWS = 3;
+    const rows = [[], [], []];
+    tiles.forEach((tile, i) => rows[i % ROWS].push(tile));
+
+    const marquee = document.createElement("div");
+    marquee.className = "ehr-marquee";
+    rows.forEach((rowTiles, idx) => {
+        const row = document.createElement("div");
+        row.className = "ehr-row" + (idx === 1 ? " rev" : idx === 2 ? " slow" : "");
+        rowTiles.forEach((t) => row.appendChild(t));            // originals
+        rowTiles.forEach((t) => {                               // clones → seamless loop
+            const c = t.cloneNode(true);
+            c.setAttribute("aria-hidden", "true");
+            row.appendChild(c);
+        });
+        marquee.appendChild(row);
+    });
+    grid.replaceWith(marquee);
+}
+
+// -------------------------------------------------------------------
+// Count-up — numbers tick from 0 to their value when scrolled into view
+// -------------------------------------------------------------------
+function wireCountUp() {
+    const els = Array.from(document.querySelectorAll(".count"));
+    if (!els.length) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function run(el) {
+        const to = parseInt(el.dataset.countTo, 10) || 0;
+        if (reduce) { el.textContent = String(to); return; }
+        const dur = 1100;
+        const start = performance.now();
+        (function tick(now) {
+            const p = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);  // ease-out cubic
+            el.textContent = String(Math.round(to * eased));
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = String(to);
+        })(start);
+    }
+
+    if (!("IntersectionObserver" in window)) { els.forEach(run); return; }
+    els.forEach((el) => { if (!reduce) el.textContent = "0"; });
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            run(e.target);
+            io.unobserve(e.target);
+        });
+    }, { threshold: 0.6 });
+    els.forEach((el) => io.observe(el));
+}
+
 wireScrollChrome();
 wireScrollSpy();
+wireHeroTilt();
+wireWorkSlider();
+wireEhrMarquee();
+wireCountUp();
+
+// -------------------------------------------------------------------
+// Bridge Console — make the live demo react on every fetch.
+// Non-invasive: observes the panels, never touches the demo's own logic.
+// -------------------------------------------------------------------
+function wireBridgeAnim() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    function onChange(el, fn) {
+        if (!el) return;
+        new MutationObserver(fn).observe(el, {
+            childList: true, characterData: true, subtree: true
+        });
+    }
+    function replay(el, cls) {
+        if (!el) return;
+        el.classList.remove(cls);
+        void el.offsetWidth;          // force reflow → restart the animation
+        el.classList.add(cls);
+    }
+
+    const raw = document.getElementById("raw-response");
+    const norm = document.getElementById("normalized-response");
+    const counter = document.getElementById("call-counter");
+    const accentPanel = norm ? norm.closest(".demo-panel-accent") : null;
+
+    onChange(raw, () => replay(raw, "bridge-fresh"));
+    onChange(norm, () => {
+        replay(norm, "bridge-fresh");
+        replay(accentPanel, "bridge-pulse");
+    });
+    onChange(counter, () => replay(counter, "bridge-bump"));
+}
+
+wireBridgeAnim();
+
+// -------------------------------------------------------------------
+// Bridge Console — measure the raw → normalized reduction, on every fetch.
+// This is the actual value prop, quantified live: vendor mess vs. clean output.
+// -------------------------------------------------------------------
+function wireTransformReadout() {
+    const rawEl  = document.getElementById("raw-response");
+    const normEl = document.getElementById("normalized-response");
+    const box    = document.getElementById("xform");
+    if (!rawEl || !normEl || !box) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function parse(el) {
+        const t = (el.textContent || "").trim();
+        if (!t || t === "—") return null;
+        try { return JSON.parse(t); } catch (e) { return null; }
+    }
+    function countKeys(v) {
+        if (Array.isArray(v)) return v.reduce((s, x) => s + countKeys(x), 0);
+        if (v && typeof v === "object") {
+            return Object.keys(v).length +
+                   Object.values(v).reduce((s, x) => s + countKeys(x), 0);
+        }
+        return 0;
+    }
+    function depth(v) {
+        if (Array.isArray(v)) return v.length ? 1 + Math.max.apply(null, v.map(depth)) : 1;
+        if (v && typeof v === "object") {
+            const vals = Object.values(v);
+            return vals.length ? 1 + Math.max.apply(null, vals.map(depth)) : 1;
+        }
+        return 0;
+    }
+    function countTo(el, to) {
+        if (reduce) { el.textContent = String(to); return; }
+        const start = performance.now(), dur = 620;
+        (function tick(now) {
+            const p = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = String(Math.round(to * eased));
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = String(to);
+        })(start);
+    }
+
+    const elRawFields  = document.getElementById("xf-raw-fields");
+    const elRawDepth   = document.getElementById("xf-raw-depth");
+    const elNormFields = document.getElementById("xf-norm-fields");
+    const elNormDepth  = document.getElementById("xf-norm-depth");
+    const elVerdict    = document.getElementById("xf-verdict");
+
+    function update() {
+        const r = parse(rawEl), n = parse(normEl);
+        if (!r || !n) { box.hidden = true; return; }
+        const rf = countKeys(r), nf = countKeys(n);
+        if (rf === 0 || nf === 0) { box.hidden = true; return; }
+        const rd = depth(r), nd = depth(n);
+
+        box.hidden = false;
+        countTo(elRawFields, rf);
+        countTo(elNormFields, nf);
+        elRawDepth.textContent  = "nested " + rd + " deep";
+        elNormDepth.textContent = nd <= 3 ? "flat" : nd + " deep";
+
+        const cut = rf > nf ? Math.round((1 - nf / rf) * 100) : 0;
+        elVerdict.innerHTML = "Same patient. Same clinical facts. The vendor's <b>" +
+            rf + "-field</b> payload becomes <b>" + nf + " flat fields</b>" +
+            (cut > 0 ? " — <b>" + cut + "% less</b> for your app to parse." : ".");
+
+        box.classList.remove("is-fresh");
+        void box.offsetWidth;
+        box.classList.add("is-fresh");
+    }
+
+    const opts = { childList: true, characterData: true, subtree: true };
+    new MutationObserver(update).observe(rawEl, opts);
+    new MutationObserver(update).observe(normEl, opts);
+}
+
+wireTransformReadout();

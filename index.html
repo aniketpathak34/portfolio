@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=26">
 </head>
 <body>
     <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
@@ -57,10 +57,47 @@
 
     <main id="top">
         <section class="hero container">
+            <div class="hero-flow" aria-hidden="true">
+                <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="hf-glow" x="-60%" y="-60%" width="220%" height="220%">
+                            <feGaussianBlur stdDeviation="3.4" result="b"></feGaussianBlur>
+                            <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+                        </filter>
+                    </defs>
+                    <g class="hf-lines" stroke="#7c9cff" stroke-width="1">
+                        <line x1="0" y1="64" x2="1200" y2="64"></line>
+                        <line x1="0" y1="158" x2="1200" y2="158"></line>
+                        <line x1="0" y1="262" x2="1200" y2="262"></line>
+                        <line x1="0" y1="366" x2="1200" y2="366"></line>
+                        <line x1="0" y1="470" x2="1200" y2="470"></line>
+                        <line x1="0" y1="548" x2="1200" y2="548"></line>
+                    </g>
+                    <g class="hf-nodes" fill="#7c9cff">
+                        <circle cx="240" cy="64" r="2.5"></circle><circle cx="720" cy="64" r="2.5"></circle>
+                        <circle cx="430" cy="158" r="2.5"></circle><circle cx="900" cy="158" r="2.5"></circle>
+                        <circle cx="150" cy="262" r="2.5"></circle><circle cx="640" cy="262" r="2.5"></circle><circle cx="1010" cy="262" r="2.5"></circle>
+                        <circle cx="330" cy="366" r="2.5"></circle><circle cx="780" cy="366" r="2.5"></circle>
+                        <circle cx="520" cy="470" r="2.5"></circle><circle cx="960" cy="470" r="2.5"></circle>
+                        <circle cx="280" cy="548" r="2.5"></circle><circle cx="700" cy="548" r="2.5"></circle>
+                    </g>
+                    <g filter="url(#hf-glow)">
+                        <circle r="4" cy="64" fill="#5ee2c3"><animate attributeName="cx" values="-50;1250" dur="5.5s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3" cy="64" fill="#7c9cff"><animate attributeName="cx" values="-50;1250" dur="10s" begin="-7s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3" cy="158" fill="#7c9cff"><animate attributeName="cx" values="1250;-50" dur="7.5s" begin="-1.5s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3.5" cy="262" fill="#5ee2c3"><animate attributeName="cx" values="-50;1250" dur="6.5s" begin="-3s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3" cy="262" fill="#7c9cff"><animate attributeName="cx" values="-50;1250" dur="9s" begin="-6s" repeatCount="indefinite"></animate></circle>
+                        <circle r="4" cy="366" fill="#7c9cff"><animate attributeName="cx" values="1250;-50" dur="6s" begin="-2s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3" cy="470" fill="#5ee2c3"><animate attributeName="cx" values="-50;1250" dur="8s" begin="-4s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3" cy="470" fill="#7c9cff"><animate attributeName="cx" values="1250;-50" dur="11s" begin="-5s" repeatCount="indefinite"></animate></circle>
+                        <circle r="3.5" cy="548" fill="#5ee2c3"><animate attributeName="cx" values="1250;-50" dur="7s" begin="-1s" repeatCount="indefinite"></animate></circle>
+                    </g>
+                </svg>
+            </div>
             <div class="hero-copy">
                 <p class="availability"><span class="availability-dot"></span> Available for new projects — from 2026</p>
                 <p class="eyebrow">EHR Integration Engineer</p>
-                <h1>I connect digital health products to the <span class="accent">40+ US EHRs</span> they need to talk to.</h1>
+                <h1>I connect digital health products to the <span class="accent"><span class="count" data-count-to="40">40</span>+ US EHRs</span> they need to talk to.</h1>
                 <p class="lede">FHIR R4, HL7 v2, bi-directional sync and write-back — the integration plumbing that lets ambient scribes, RPM, AI medical coding and care platforms actually exchange data with Epic, Athena, eClinicalWorks, NextGen, Healthie, Elation and the rest.</p>
                 <div class="cta-row">
                     <a class="btn btn-primary" href="mailto:aniketpathak34@gmail.com?subject=EHR%20integration%20project">Start a project →</a>
@@ -170,8 +207,14 @@
         -->
 
         <section id="work" class="container section">
-            <h2>More selected work</h2>
-            <div class="projects">
+            <div class="work-head">
+                <h2>More selected work</h2>
+                <div class="slider-nav">
+                    <button type="button" class="slider-arrow" id="work-prev" aria-label="Previous projects">‹</button>
+                    <button type="button" class="slider-arrow" id="work-next" aria-label="Next projects">›</button>
+                </div>
+            </div>
+            <div class="projects" id="work-track">
                 <article class="project-card">
                     <h3>Isabella AI — HIPAA-compliant healthcare AI</h3>
                     <p class="project-role">EHR + AI integration</p>
@@ -216,7 +259,7 @@
 
         <section id="coverage" class="container section">
             <h2>Integration coverage</h2>
-            <p class="section-lede"><strong>42 EHRs integrated</strong> — each with its own API, auth, sandbox process and undocumented quirks. One adapter pattern, every vendor behind one clean contract.</p>
+            <p class="section-lede"><strong><span class="count" data-count-to="42">42</span> EHRs integrated</strong> — each with its own API, auth, sandbox process and undocumented quirks. One adapter pattern, every vendor behind one clean contract.</p>
 
             <div class="ehr-grid">
                 <div class="ehr-tile"><span class="ehr-name">Athena</span></div>
@@ -349,6 +392,21 @@
                     <div class="demo-request">
                         <span class="demo-label">Request</span>
                         <pre><code id="request-preview">—</code></pre>
+                    </div>
+
+                    <div class="xform" id="xform" hidden aria-live="polite">
+                        <div class="xform-col xform-raw">
+                            <span class="xform-tag">Raw vendor payload</span>
+                            <span class="xform-stat"><b id="xf-raw-fields">0</b> fields<i>·</i><span id="xf-raw-depth">—</span></span>
+                        </div>
+                        <div class="xform-pipe">
+                            <span class="xform-pipe-label">normalize</span>
+                        </div>
+                        <div class="xform-col xform-norm">
+                            <span class="xform-tag">Normalized output</span>
+                            <span class="xform-stat"><b id="xf-norm-fields">0</b> fields<i>·</i><span id="xf-norm-depth">flat</span></span>
+                        </div>
+                        <div class="xform-verdict" id="xf-verdict"></div>
                     </div>
 
                     <div class="demo-panels">
@@ -486,6 +544,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=13"></script>
+    <script src="script.js?v=22"></script>
 </body>
 </html>
